@@ -9,7 +9,7 @@ use Slim\Middleware\HttpBasicAuthentication;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Container;
 
-use \Core\Handlers\HandlerBase as HandlerBase;
+use \Core\Handler\HandlerBase as HandlerBase;
 
 class EntryPoint {
 
@@ -145,7 +145,8 @@ class EntryPoint {
     }
 
     function RegisterHandlers() {
-        $TestHandler = new \Core\Handlers\TestHandler($this->slimApp);
+        $TestHandler = new \Core\Handler\TestHandler($this->slimApp);
+        $PlayerHandler = new \Core\Handler\PlayerHandler($this->slimApp);
 
         $this->slimApp->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
             throw new \Slim\Exception\HttpNotFoundException($request);

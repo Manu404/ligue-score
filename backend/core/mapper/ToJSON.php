@@ -1,33 +1,30 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: istac
- * Date: 3/17/2018
- * Time: 1:46 PM
- */
 
-// namespace Core\Mapper;
+namespace Core\Mapper;
 
-// use Model\Model\Callme;
-// use \Model\Model\ConsumptionBuildingState;
-// use \Model\Model\ConsumptionBuildingType;
-// use \Model\Model\ConsumptionEnergy;
-// use \Model\Model\ConsumptionEnergyProvider;
-// use \Model\Model\ConsumptionHeatingSystem;
-// use Model\Model\Contactme;
-// use Model\Model\Consumption;
-// use Model\Model\User;
-// use DateTime;
-// use DateTimeZone;
+use DateTime;
+use DateTimeZone;
+use \Model\Player;
 
-// class ToJSON {
-//     public static function ConsumptionBuildingState(ConsumptionBuildingState $data){
-//         return array(
-//             "id" => $data->getId(),
-//             "name" => $data->getName(),
-//             "fr" => $data->getFr()
-//         );
-//     }
+class ToJSON {
+    public static function Player(Player $data){
+        return array(
+            "id" => $data->getId(),
+            "name" => $data->getName()
+        );
+    }
+    
+    private static function FormatDate(DateTime $date){
+        // create a $dt object with the UTC timezone
+        $dt = new DateTime($date->format("Y-m-d H:i:s"), new DateTimeZone('UTC'));
+
+        // change the timezone of the object without changing it's time
+        $dt->setTimezone(new DateTimeZone('Europe/Brussels'));
+
+        // format the datetime
+        return $dt->format('Y-m-d H:i:s');
+    }
+}
 
 //     public static function ConsumptionBuildingType(ConsumptionBuildingType $data){
 //         return array(
@@ -125,19 +122,7 @@
 //         );
 //     }
 
-//     private static function FormatDate(DateTime $date){
-//         // create a $dt object with the UTC timezone
-//         $dt = new DateTime($date->format("Y-m-d H:i:s"), new DateTimeZone('UTC'));
-
-//         // change the timezone of the object without changing it's time
-//         $dt->setTimezone(new DateTimeZone('Europe/Brussels'));
-
-//         // format the datetime
-//         return $dt->format('Y-m-d H:i:s');
-//     }
 
 //     private static function GetFullName(User $user) {
 //         return ucfirst(strtolower($user->getFirstname())).' '.ucfirst(strtolower($user->getLastname()));
 //     }
-// }
-?>

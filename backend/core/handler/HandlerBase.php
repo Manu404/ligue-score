@@ -6,7 +6,7 @@
  * Time: 1:31 PM
  */
 
-namespace Core\Handlers;
+namespace Core\Handler;
 
 use \Psr\Http\Message\ResponseInterface as Response;
 use Exception;

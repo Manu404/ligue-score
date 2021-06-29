@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Handlers;
+namespace Core\Handler;
 
 use Exception;
 use Propel\Runtime\Propel;
@@ -8,7 +8,7 @@ use Propel\Runtime\Formatter\ObjectFormatter;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Slim\App;
-use \Core\Handlers\HandlerBase as HandlerBase;
+use \Core\Handler\HandlerBase as HandlerBase;
 use \Model\PlayerQuery;
 
 class TestHandler extends HandlerBase {
