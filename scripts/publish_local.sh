@@ -1,5 +1,5 @@
 #!/bin/bash
 
-rm -r $TARGET_BUILD_ROOT/*
+sudo rm -rf $TARGET_PUBLISH_ROOT/*
 
-cp -r
+sudo cp -r $TARGET_BUILD_ROOT/* $TARGET_PUBLISH_ROOT

@@ -12,17 +12,17 @@ while test $# -gt 0; do
 		echo "Gollum got a new home! (ln in ~/bin/gollum, make it globally available for current user)"
 		source ./install_gollum.sh
 		exit;;
-	setup:back)
+	setup:be)
 		echo "Setup backend devenv."; 
 		source ./setup_composer.sh; 
 		exit;;
-	build:back)
+	build:be)
 		echo "Build backend"; 
 		source ./build_backend.sh; 
 		exit;;
-	publish:back:local)
-		echo "Clean test + dependencies"; 
-		source ./clean_testdep.sh; 
+	publish:be:local)
+		echo "Publish backend to local test"; 
+		source ./publish_local.sh; 
 		exit;;
 	help)
 		echo "======================================================================================"

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd $BACKEND_FOLDER
+
 rm -r $TARGET_BUILD_ROOT
 
 mkdir $TARGET_BUILD_ROOT
