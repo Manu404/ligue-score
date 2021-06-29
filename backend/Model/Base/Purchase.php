@@ -4,18 +4,19 @@ namespace Model\Base;
 
 use \Exception;
 use \PDO;
-use Model\Purchase as ChildPurchase;
+use Model\Game as ChildGame;
+use Model\GameQuery as ChildGameQuery;
+use Model\Player as ChildPlayer;
+use Model\PlayerQuery as ChildPlayerQuery;
 use Model\PurchaseQuery as ChildPurchaseQuery;
 use Model\Shopitems as ChildShopitems;
 use Model\ShopitemsQuery as ChildShopitemsQuery;
 use Model\Map\PurchaseTableMap;
-use Model\Map\ShopitemsTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -24,18 +25,18 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 
 /**
- * Base class that represents a row from the 'shopitems' table.
+ * Base class that represents a row from the 'purchase' table.
  *
  *
  *
  * @package    propel.generator.Model.Base
  */
-abstract class Shopitems implements ActiveRecordInterface
+abstract class Purchase implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Model\\Map\\ShopitemsTableMap';
+    const TABLE_MAP = '\\Model\\Map\\PurchaseTableMap';
 
 
     /**
@@ -72,31 +73,40 @@ abstract class Shopitems implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the name field.
-     *
-     * @var        string|null
-     */
-    protected $name;
-
-    /**
-     * The value for the description field.
-     *
-     * @var        string|null
-     */
-    protected $description;
-
-    /**
-     * The value for the cost field.
+     * The value for the playerid field.
      *
      * @var        int|null
      */
-    protected $cost;
+    protected $playerid;
 
     /**
-     * @var        ObjectCollection|ChildPurchase[] Collection to store aggregation of ChildPurchase objects.
+     * The value for the itemid field.
+     *
+     * @var        int|null
      */
-    protected $collPurchases;
-    protected $collPurchasesPartial;
+    protected $itemid;
+
+    /**
+     * The value for the gameid field.
+     *
+     * @var        int|null
+     */
+    protected $gameid;
+
+    /**
+     * @var        ChildGame
+     */
+    protected $aGame;
+
+    /**
+     * @var        ChildShopitems
+     */
+    protected $aShopitems;
+
+    /**
+     * @var        ChildPlayer
+     */
+    protected $aPlayer;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -107,13 +117,7 @@ abstract class Shopitems implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildPurchase[]
-     */
-    protected $purchasesScheduledForDeletion = null;
-
-    /**
-     * Initializes internal state of Model\Base\Shopitems object.
+     * Initializes internal state of Model\Base\Purchase object.
      */
     public function __construct()
     {
@@ -206,9 +210,9 @@ abstract class Shopitems implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Shopitems</code> instance.  If
-     * <code>obj</code> is an instance of <code>Shopitems</code>, delegates to
-     * <code>equals(Shopitems)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Purchase</code> instance.  If
+     * <code>obj</code> is an instance of <code>Purchase</code>, delegates to
+     * <code>equals(Purchase)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -347,40 +351,40 @@ abstract class Shopitems implements ActiveRecordInterface
     }
 
     /**
-     * Get the [name] column value.
-     *
-     * @return string|null
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Get the [description] column value.
-     *
-     * @return string|null
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * Get the [cost] column value.
+     * Get the [playerid] column value.
      *
      * @return int|null
      */
-    public function getCost()
+    public function getPlayerid()
     {
-        return $this->cost;
+        return $this->playerid;
+    }
+
+    /**
+     * Get the [itemid] column value.
+     *
+     * @return int|null
+     */
+    public function getItemid()
+    {
+        return $this->itemid;
+    }
+
+    /**
+     * Get the [gameid] column value.
+     *
+     * @return int|null
+     */
+    public function getGameid()
+    {
+        return $this->gameid;
     }
 
     /**
      * Set the value of [id] column.
      *
      * @param int $v New value
-     * @return $this|\Model\Shopitems The current object (for fluent API support)
+     * @return $this|\Model\Purchase The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -390,71 +394,83 @@ abstract class Shopitems implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[ShopitemsTableMap::COL_ID] = true;
+            $this->modifiedColumns[PurchaseTableMap::COL_ID] = true;
         }
 
         return $this;
     } // setId()
 
     /**
-     * Set the value of [name] column.
-     *
-     * @param string|null $v New value
-     * @return $this|\Model\Shopitems The current object (for fluent API support)
-     */
-    public function setName($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->name !== $v) {
-            $this->name = $v;
-            $this->modifiedColumns[ShopitemsTableMap::COL_NAME] = true;
-        }
-
-        return $this;
-    } // setName()
-
-    /**
-     * Set the value of [description] column.
-     *
-     * @param string|null $v New value
-     * @return $this|\Model\Shopitems The current object (for fluent API support)
-     */
-    public function setDescription($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->description !== $v) {
-            $this->description = $v;
-            $this->modifiedColumns[ShopitemsTableMap::COL_DESCRIPTION] = true;
-        }
-
-        return $this;
-    } // setDescription()
-
-    /**
-     * Set the value of [cost] column.
+     * Set the value of [playerid] column.
      *
      * @param int|null $v New value
-     * @return $this|\Model\Shopitems The current object (for fluent API support)
+     * @return $this|\Model\Purchase The current object (for fluent API support)
      */
-    public function setCost($v)
+    public function setPlayerid($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->cost !== $v) {
-            $this->cost = $v;
-            $this->modifiedColumns[ShopitemsTableMap::COL_COST] = true;
+        if ($this->playerid !== $v) {
+            $this->playerid = $v;
+            $this->modifiedColumns[PurchaseTableMap::COL_PLAYERID] = true;
+        }
+
+        if ($this->aPlayer !== null && $this->aPlayer->getId() !== $v) {
+            $this->aPlayer = null;
         }
 
         return $this;
-    } // setCost()
+    } // setPlayerid()
+
+    /**
+     * Set the value of [itemid] column.
+     *
+     * @param int|null $v New value
+     * @return $this|\Model\Purchase The current object (for fluent API support)
+     */
+    public function setItemid($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->itemid !== $v) {
+            $this->itemid = $v;
+            $this->modifiedColumns[PurchaseTableMap::COL_ITEMID] = true;
+        }
+
+        if ($this->aShopitems !== null && $this->aShopitems->getId() !== $v) {
+            $this->aShopitems = null;
+        }
+
+        return $this;
+    } // setItemid()
+
+    /**
+     * Set the value of [gameid] column.
+     *
+     * @param int|null $v New value
+     * @return $this|\Model\Purchase The current object (for fluent API support)
+     */
+    public function setGameid($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->gameid !== $v) {
+            $this->gameid = $v;
+            $this->modifiedColumns[PurchaseTableMap::COL_GAMEID] = true;
+        }
+
+        if ($this->aGame !== null && $this->aGame->getId() !== $v) {
+            $this->aGame = null;
+        }
+
+        return $this;
+    } // setGameid()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -492,17 +508,17 @@ abstract class Shopitems implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ShopitemsTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : PurchaseTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ShopitemsTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->name = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : PurchaseTableMap::translateFieldName('Playerid', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->playerid = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ShopitemsTableMap::translateFieldName('Description', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->description = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : PurchaseTableMap::translateFieldName('Itemid', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->itemid = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ShopitemsTableMap::translateFieldName('Cost', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->cost = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : PurchaseTableMap::translateFieldName('Gameid', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->gameid = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -511,10 +527,10 @@ abstract class Shopitems implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = ShopitemsTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = PurchaseTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Model\\Shopitems'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Model\\Purchase'), 0, $e);
         }
     }
 
@@ -533,6 +549,15 @@ abstract class Shopitems implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aPlayer !== null && $this->playerid !== $this->aPlayer->getId()) {
+            $this->aPlayer = null;
+        }
+        if ($this->aShopitems !== null && $this->itemid !== $this->aShopitems->getId()) {
+            $this->aShopitems = null;
+        }
+        if ($this->aGame !== null && $this->gameid !== $this->aGame->getId()) {
+            $this->aGame = null;
+        }
     } // ensureConsistency
 
     /**
@@ -556,13 +581,13 @@ abstract class Shopitems implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(ShopitemsTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(PurchaseTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildShopitemsQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildPurchaseQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -572,8 +597,9 @@ abstract class Shopitems implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collPurchases = null;
-
+            $this->aGame = null;
+            $this->aShopitems = null;
+            $this->aPlayer = null;
         } // if (deep)
     }
 
@@ -583,8 +609,8 @@ abstract class Shopitems implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see Shopitems::setDeleted()
-     * @see Shopitems::isDeleted()
+     * @see Purchase::setDeleted()
+     * @see Purchase::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -593,11 +619,11 @@ abstract class Shopitems implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ShopitemsTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(PurchaseTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildShopitemsQuery::create()
+            $deleteQuery = ChildPurchaseQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -632,7 +658,7 @@ abstract class Shopitems implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ShopitemsTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(PurchaseTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -651,7 +677,7 @@ abstract class Shopitems implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                ShopitemsTableMap::addInstanceToPool($this);
+                PurchaseTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -677,6 +703,32 @@ abstract class Shopitems implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aGame !== null) {
+                if ($this->aGame->isModified() || $this->aGame->isNew()) {
+                    $affectedRows += $this->aGame->save($con);
+                }
+                $this->setGame($this->aGame);
+            }
+
+            if ($this->aShopitems !== null) {
+                if ($this->aShopitems->isModified() || $this->aShopitems->isNew()) {
+                    $affectedRows += $this->aShopitems->save($con);
+                }
+                $this->setShopitems($this->aShopitems);
+            }
+
+            if ($this->aPlayer !== null) {
+                if ($this->aPlayer->isModified() || $this->aPlayer->isNew()) {
+                    $affectedRows += $this->aPlayer->save($con);
+                }
+                $this->setPlayer($this->aPlayer);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -686,24 +738,6 @@ abstract class Shopitems implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
-            }
-
-            if ($this->purchasesScheduledForDeletion !== null) {
-                if (!$this->purchasesScheduledForDeletion->isEmpty()) {
-                    foreach ($this->purchasesScheduledForDeletion as $purchase) {
-                        // need to save related object because we set the relation to null
-                        $purchase->save($con);
-                    }
-                    $this->purchasesScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collPurchases !== null) {
-                foreach ($this->collPurchases as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
             }
 
             $this->alreadyInSave = false;
@@ -726,27 +760,27 @@ abstract class Shopitems implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[ShopitemsTableMap::COL_ID] = true;
+        $this->modifiedColumns[PurchaseTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ShopitemsTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . PurchaseTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ShopitemsTableMap::COL_ID)) {
+        if ($this->isColumnModified(PurchaseTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(ShopitemsTableMap::COL_NAME)) {
-            $modifiedColumns[':p' . $index++]  = 'name';
+        if ($this->isColumnModified(PurchaseTableMap::COL_PLAYERID)) {
+            $modifiedColumns[':p' . $index++]  = 'playerid';
         }
-        if ($this->isColumnModified(ShopitemsTableMap::COL_DESCRIPTION)) {
-            $modifiedColumns[':p' . $index++]  = 'description';
+        if ($this->isColumnModified(PurchaseTableMap::COL_ITEMID)) {
+            $modifiedColumns[':p' . $index++]  = 'itemid';
         }
-        if ($this->isColumnModified(ShopitemsTableMap::COL_COST)) {
-            $modifiedColumns[':p' . $index++]  = 'cost';
+        if ($this->isColumnModified(PurchaseTableMap::COL_GAMEID)) {
+            $modifiedColumns[':p' . $index++]  = 'gameid';
         }
 
         $sql = sprintf(
-            'INSERT INTO shopitems (%s) VALUES (%s)',
+            'INSERT INTO purchase (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -758,14 +792,14 @@ abstract class Shopitems implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'name':
-                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
+                    case 'playerid':
+                        $stmt->bindValue($identifier, $this->playerid, PDO::PARAM_INT);
                         break;
-                    case 'description':
-                        $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
+                    case 'itemid':
+                        $stmt->bindValue($identifier, $this->itemid, PDO::PARAM_INT);
                         break;
-                    case 'cost':
-                        $stmt->bindValue($identifier, $this->cost, PDO::PARAM_INT);
+                    case 'gameid':
+                        $stmt->bindValue($identifier, $this->gameid, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -813,7 +847,7 @@ abstract class Shopitems implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ShopitemsTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = PurchaseTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -833,13 +867,13 @@ abstract class Shopitems implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getName();
+                return $this->getPlayerid();
                 break;
             case 2:
-                return $this->getDescription();
+                return $this->getItemid();
                 break;
             case 3:
-                return $this->getCost();
+                return $this->getGameid();
                 break;
             default:
                 return null;
@@ -865,16 +899,16 @@ abstract class Shopitems implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['Shopitems'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Purchase'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Shopitems'][$this->hashCode()] = true;
-        $keys = ShopitemsTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Purchase'][$this->hashCode()] = true;
+        $keys = PurchaseTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getName(),
-            $keys[2] => $this->getDescription(),
-            $keys[3] => $this->getCost(),
+            $keys[1] => $this->getPlayerid(),
+            $keys[2] => $this->getItemid(),
+            $keys[3] => $this->getGameid(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -882,20 +916,50 @@ abstract class Shopitems implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collPurchases) {
+            if (null !== $this->aGame) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'purchases';
+                        $key = 'game';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'purchases';
+                        $key = 'game';
                         break;
                     default:
-                        $key = 'Purchases';
+                        $key = 'Game';
                 }
 
-                $result[$key] = $this->collPurchases->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->aGame->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aShopitems) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'shopitems';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'shopitems';
+                        break;
+                    default:
+                        $key = 'Shopitems';
+                }
+
+                $result[$key] = $this->aShopitems->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aPlayer) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'player';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'player';
+                        break;
+                    default:
+                        $key = 'Player';
+                }
+
+                $result[$key] = $this->aPlayer->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -911,11 +975,11 @@ abstract class Shopitems implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\Model\Shopitems
+     * @return $this|\Model\Purchase
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ShopitemsTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = PurchaseTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -926,7 +990,7 @@ abstract class Shopitems implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\Model\Shopitems
+     * @return $this|\Model\Purchase
      */
     public function setByPosition($pos, $value)
     {
@@ -935,13 +999,13 @@ abstract class Shopitems implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setName($value);
+                $this->setPlayerid($value);
                 break;
             case 2:
-                $this->setDescription($value);
+                $this->setItemid($value);
                 break;
             case 3:
-                $this->setCost($value);
+                $this->setGameid($value);
                 break;
         } // switch()
 
@@ -963,23 +1027,23 @@ abstract class Shopitems implements ActiveRecordInterface
      *
      * @param      array  $arr     An array to populate the object from.
      * @param      string $keyType The type of keys the array uses.
-     * @return     $this|\Model\Shopitems
+     * @return     $this|\Model\Purchase
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = ShopitemsTableMap::getFieldNames($keyType);
+        $keys = PurchaseTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setName($arr[$keys[1]]);
+            $this->setPlayerid($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setDescription($arr[$keys[2]]);
+            $this->setItemid($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setCost($arr[$keys[3]]);
+            $this->setGameid($arr[$keys[3]]);
         }
 
         return $this;
@@ -1002,7 +1066,7 @@ abstract class Shopitems implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\Model\Shopitems The current object, for fluid interface
+     * @return $this|\Model\Purchase The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1022,19 +1086,19 @@ abstract class Shopitems implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ShopitemsTableMap::DATABASE_NAME);
+        $criteria = new Criteria(PurchaseTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(ShopitemsTableMap::COL_ID)) {
-            $criteria->add(ShopitemsTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(PurchaseTableMap::COL_ID)) {
+            $criteria->add(PurchaseTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(ShopitemsTableMap::COL_NAME)) {
-            $criteria->add(ShopitemsTableMap::COL_NAME, $this->name);
+        if ($this->isColumnModified(PurchaseTableMap::COL_PLAYERID)) {
+            $criteria->add(PurchaseTableMap::COL_PLAYERID, $this->playerid);
         }
-        if ($this->isColumnModified(ShopitemsTableMap::COL_DESCRIPTION)) {
-            $criteria->add(ShopitemsTableMap::COL_DESCRIPTION, $this->description);
+        if ($this->isColumnModified(PurchaseTableMap::COL_ITEMID)) {
+            $criteria->add(PurchaseTableMap::COL_ITEMID, $this->itemid);
         }
-        if ($this->isColumnModified(ShopitemsTableMap::COL_COST)) {
-            $criteria->add(ShopitemsTableMap::COL_COST, $this->cost);
+        if ($this->isColumnModified(PurchaseTableMap::COL_GAMEID)) {
+            $criteria->add(PurchaseTableMap::COL_GAMEID, $this->gameid);
         }
 
         return $criteria;
@@ -1052,8 +1116,8 @@ abstract class Shopitems implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildShopitemsQuery::create();
-        $criteria->add(ShopitemsTableMap::COL_ID, $this->id);
+        $criteria = ChildPurchaseQuery::create();
+        $criteria->add(PurchaseTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1115,30 +1179,16 @@ abstract class Shopitems implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Model\Shopitems (or compatible) type.
+     * @param      object $copyObj An object of \Model\Purchase (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setName($this->getName());
-        $copyObj->setDescription($this->getDescription());
-        $copyObj->setCost($this->getCost());
-
-        if ($deepCopy) {
-            // important: temporarily setNew(false) because this affects the behavior of
-            // the getter/setter methods for fkey referrer objects.
-            $copyObj->setNew(false);
-
-            foreach ($this->getPurchases() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addPurchase($relObj->copy($deepCopy));
-                }
-            }
-
-        } // if ($deepCopy)
-
+        $copyObj->setPlayerid($this->getPlayerid());
+        $copyObj->setItemid($this->getItemid());
+        $copyObj->setGameid($this->getGameid());
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1154,7 +1204,7 @@ abstract class Shopitems implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \Model\Shopitems Clone of current object.
+     * @return \Model\Purchase Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1167,305 +1217,157 @@ abstract class Shopitems implements ActiveRecordInterface
         return $copyObj;
     }
 
-
     /**
-     * Initializes a collection based on the name of a relation.
-     * Avoids crafting an 'init[$relationName]s' method name
-     * that wouldn't work when StandardEnglishPluralizer is used.
+     * Declares an association between this object and a ChildGame object.
      *
-     * @param      string $relationName The name of the relation to initialize
-     * @return void
-     */
-    public function initRelation($relationName)
-    {
-        if ('Purchase' === $relationName) {
-            $this->initPurchases();
-            return;
-        }
-    }
-
-    /**
-     * Clears out the collPurchases collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addPurchases()
-     */
-    public function clearPurchases()
-    {
-        $this->collPurchases = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collPurchases collection loaded partially.
-     */
-    public function resetPartialPurchases($v = true)
-    {
-        $this->collPurchasesPartial = $v;
-    }
-
-    /**
-     * Initializes the collPurchases collection.
-     *
-     * By default this just sets the collPurchases collection to an empty array (like clearcollPurchases());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initPurchases($overrideExisting = true)
-    {
-        if (null !== $this->collPurchases && !$overrideExisting) {
-            return;
-        }
-
-        $collectionClassName = PurchaseTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collPurchases = new $collectionClassName;
-        $this->collPurchases->setModel('\Model\Purchase');
-    }
-
-    /**
-     * Gets an array of ChildPurchase objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildShopitems is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildPurchase[] List of ChildPurchase objects
+     * @param  ChildGame|null $v
+     * @return $this|\Model\Purchase The current object (for fluent API support)
      * @throws PropelException
      */
-    public function getPurchases(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function setGame(ChildGame $v = null)
     {
-        $partial = $this->collPurchasesPartial && !$this->isNew();
-        if (null === $this->collPurchases || null !== $criteria || $partial) {
-            if ($this->isNew()) {
-                // return empty collection
-                if (null === $this->collPurchases) {
-                    $this->initPurchases();
-                } else {
-                    $collectionClassName = PurchaseTableMap::getTableMap()->getCollectionClassName();
-
-                    $collPurchases = new $collectionClassName;
-                    $collPurchases->setModel('\Model\Purchase');
-
-                    return $collPurchases;
-                }
-            } else {
-                $collPurchases = ChildPurchaseQuery::create(null, $criteria)
-                    ->filterByShopitems($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collPurchasesPartial && count($collPurchases)) {
-                        $this->initPurchases(false);
-
-                        foreach ($collPurchases as $obj) {
-                            if (false == $this->collPurchases->contains($obj)) {
-                                $this->collPurchases->append($obj);
-                            }
-                        }
-
-                        $this->collPurchasesPartial = true;
-                    }
-
-                    return $collPurchases;
-                }
-
-                if ($partial && $this->collPurchases) {
-                    foreach ($this->collPurchases as $obj) {
-                        if ($obj->isNew()) {
-                            $collPurchases[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collPurchases = $collPurchases;
-                $this->collPurchasesPartial = false;
-            }
+        if ($v === null) {
+            $this->setGameid(NULL);
+        } else {
+            $this->setGameid($v->getId());
         }
 
-        return $this->collPurchases;
-    }
+        $this->aGame = $v;
 
-    /**
-     * Sets a collection of ChildPurchase objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $purchases A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildShopitems The current object (for fluent API support)
-     */
-    public function setPurchases(Collection $purchases, ConnectionInterface $con = null)
-    {
-        /** @var ChildPurchase[] $purchasesToDelete */
-        $purchasesToDelete = $this->getPurchases(new Criteria(), $con)->diff($purchases);
-
-
-        $this->purchasesScheduledForDeletion = $purchasesToDelete;
-
-        foreach ($purchasesToDelete as $purchaseRemoved) {
-            $purchaseRemoved->setShopitems(null);
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildGame object, it will not be re-added.
+        if ($v !== null) {
+            $v->addPurchase($this);
         }
 
-        $this->collPurchases = null;
-        foreach ($purchases as $purchase) {
-            $this->addPurchase($purchase);
-        }
-
-        $this->collPurchases = $purchases;
-        $this->collPurchasesPartial = false;
 
         return $this;
     }
 
+
     /**
-     * Returns the number of related Purchase objects.
+     * Get the associated ChildGame object
      *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related Purchase objects.
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildGame|null The associated ChildGame object.
      * @throws PropelException
      */
-    public function countPurchases(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function getGame(ConnectionInterface $con = null)
     {
-        $partial = $this->collPurchasesPartial && !$this->isNew();
-        if (null === $this->collPurchases || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collPurchases) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getPurchases());
-            }
-
-            $query = ChildPurchaseQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByShopitems($this)
-                ->count($con);
+        if ($this->aGame === null && ($this->gameid != 0)) {
+            $this->aGame = ChildGameQuery::create()->findPk($this->gameid, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aGame->addPurchases($this);
+             */
         }
 
-        return count($this->collPurchases);
+        return $this->aGame;
     }
 
     /**
-     * Method called to associate a ChildPurchase object to this object
-     * through the ChildPurchase foreign key attribute.
+     * Declares an association between this object and a ChildShopitems object.
      *
-     * @param  ChildPurchase $l ChildPurchase
-     * @return $this|\Model\Shopitems The current object (for fluent API support)
+     * @param  ChildShopitems|null $v
+     * @return $this|\Model\Purchase The current object (for fluent API support)
+     * @throws PropelException
      */
-    public function addPurchase(ChildPurchase $l)
+    public function setShopitems(ChildShopitems $v = null)
     {
-        if ($this->collPurchases === null) {
-            $this->initPurchases();
-            $this->collPurchasesPartial = true;
+        if ($v === null) {
+            $this->setItemid(NULL);
+        } else {
+            $this->setItemid($v->getId());
         }
 
-        if (!$this->collPurchases->contains($l)) {
-            $this->doAddPurchase($l);
+        $this->aShopitems = $v;
 
-            if ($this->purchasesScheduledForDeletion and $this->purchasesScheduledForDeletion->contains($l)) {
-                $this->purchasesScheduledForDeletion->remove($this->purchasesScheduledForDeletion->search($l));
-            }
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildShopitems object, it will not be re-added.
+        if ($v !== null) {
+            $v->addPurchase($this);
         }
 
-        return $this;
-    }
-
-    /**
-     * @param ChildPurchase $purchase The ChildPurchase object to add.
-     */
-    protected function doAddPurchase(ChildPurchase $purchase)
-    {
-        $this->collPurchases[]= $purchase;
-        $purchase->setShopitems($this);
-    }
-
-    /**
-     * @param  ChildPurchase $purchase The ChildPurchase object to remove.
-     * @return $this|ChildShopitems The current object (for fluent API support)
-     */
-    public function removePurchase(ChildPurchase $purchase)
-    {
-        if ($this->getPurchases()->contains($purchase)) {
-            $pos = $this->collPurchases->search($purchase);
-            $this->collPurchases->remove($pos);
-            if (null === $this->purchasesScheduledForDeletion) {
-                $this->purchasesScheduledForDeletion = clone $this->collPurchases;
-                $this->purchasesScheduledForDeletion->clear();
-            }
-            $this->purchasesScheduledForDeletion[]= $purchase;
-            $purchase->setShopitems(null);
-        }
 
         return $this;
     }
 
 
     /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Shopitems is new, it will return
-     * an empty collection; or if this Shopitems has previously
-     * been saved, it will retrieve related Purchases from storage.
+     * Get the associated ChildShopitems object
      *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Shopitems.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildPurchase[] List of ChildPurchase objects
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildShopitems|null The associated ChildShopitems object.
+     * @throws PropelException
      */
-    public function getPurchasesJoinGame(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getShopitems(ConnectionInterface $con = null)
     {
-        $query = ChildPurchaseQuery::create(null, $criteria);
-        $query->joinWith('Game', $joinBehavior);
+        if ($this->aShopitems === null && ($this->itemid != 0)) {
+            $this->aShopitems = ChildShopitemsQuery::create()->findPk($this->itemid, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aShopitems->addPurchases($this);
+             */
+        }
 
-        return $this->getPurchases($query, $con);
+        return $this->aShopitems;
+    }
+
+    /**
+     * Declares an association between this object and a ChildPlayer object.
+     *
+     * @param  ChildPlayer|null $v
+     * @return $this|\Model\Purchase The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setPlayer(ChildPlayer $v = null)
+    {
+        if ($v === null) {
+            $this->setPlayerid(NULL);
+        } else {
+            $this->setPlayerid($v->getId());
+        }
+
+        $this->aPlayer = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildPlayer object, it will not be re-added.
+        if ($v !== null) {
+            $v->addPurchase($this);
+        }
+
+
+        return $this;
     }
 
 
     /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Shopitems is new, it will return
-     * an empty collection; or if this Shopitems has previously
-     * been saved, it will retrieve related Purchases from storage.
+     * Get the associated ChildPlayer object
      *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Shopitems.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildPurchase[] List of ChildPurchase objects
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildPlayer|null The associated ChildPlayer object.
+     * @throws PropelException
      */
-    public function getPurchasesJoinPlayer(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getPlayer(ConnectionInterface $con = null)
     {
-        $query = ChildPurchaseQuery::create(null, $criteria);
-        $query->joinWith('Player', $joinBehavior);
+        if ($this->aPlayer === null && ($this->playerid != 0)) {
+            $this->aPlayer = ChildPlayerQuery::create()->findPk($this->playerid, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aPlayer->addPurchases($this);
+             */
+        }
 
-        return $this->getPurchases($query, $con);
+        return $this->aPlayer;
     }
 
     /**
@@ -1475,10 +1377,19 @@ abstract class Shopitems implements ActiveRecordInterface
      */
     public function clear()
     {
+        if (null !== $this->aGame) {
+            $this->aGame->removePurchase($this);
+        }
+        if (null !== $this->aShopitems) {
+            $this->aShopitems->removePurchase($this);
+        }
+        if (null !== $this->aPlayer) {
+            $this->aPlayer->removePurchase($this);
+        }
         $this->id = null;
-        $this->name = null;
-        $this->description = null;
-        $this->cost = null;
+        $this->playerid = null;
+        $this->itemid = null;
+        $this->gameid = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1497,14 +1408,11 @@ abstract class Shopitems implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collPurchases) {
-                foreach ($this->collPurchases as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
         } // if ($deep)
 
-        $this->collPurchases = null;
+        $this->aGame = null;
+        $this->aShopitems = null;
+        $this->aPlayer = null;
     }
 
     /**
@@ -1514,7 +1422,7 @@ abstract class Shopitems implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(ShopitemsTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(PurchaseTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

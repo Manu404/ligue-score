@@ -3,13 +3,13 @@
 namespace Core\Handlers;
 
 use Exception;
+use Propel\Runtime\Propel;
+use Propel\Runtime\Formatter\ObjectFormatter;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Slim\App;
 use \Core\Handlers\HandlerBase as HandlerBase;
-use \Model\GameQuery;
-use \Model\Game;
-use \Model\Gametype;
+use \Model\PlayerQuery;
 
 class TestHandler extends HandlerBase {
 
@@ -23,10 +23,21 @@ class TestHandler extends HandlerBase {
 
     private function InitializeGet() {
         $this->app->get('/api/v1/test/', function (Request $request, Response $response, array $args) {
-            
-            $gameQuery = GameQuery::create();
-            $game = $gameQuery->findPk(1);
-            return HandlerBase::PrepareGetResponse(array("id" => $game->getId(), "type" => $game->getType(), "date" => $game->getDayId()), $response);
+
+            $oConn = Propel::getConnection();
+            $sSQL = 'SELECT * FROM total_per_player';
+            $oStm = $oConn->prepare($sSQL);
+            $oStm->execute();
+            $result = 0;
+            foreach ($oStm->fetchAll() as $up) {
+                $result = $up['playerid'];
+            }
+
+            $stmt = null;
+
+            $gameQuery = PlayerQuery::create();
+            $game = $gameQuery->findPk($result);
+            return HandlerBase::PrepareGetResponse(array("id" => $game->getId()), $response);
 
             // if($args["id"] != null && is_numeric(args["id"])) {
             //     $callMeQuery = CallmeQuery::create();

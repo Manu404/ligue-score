@@ -9,17 +9,17 @@ use Model\GameplayersQuery as ChildGameplayersQuery;
 use Model\Gamescore as ChildGamescore;
 use Model\GamescoreQuery as ChildGamescoreQuery;
 use Model\Player as ChildPlayer;
-use Model\PlayerBuy as ChildPlayerBuy;
-use Model\PlayerBuyQuery as ChildPlayerBuyQuery;
 use Model\PlayerQuery as ChildPlayerQuery;
+use Model\Purchase as ChildPurchase;
+use Model\PurchaseQuery as ChildPurchaseQuery;
 use Model\Reservation as ChildReservation;
 use Model\ReservationQuery as ChildReservationQuery;
 use Model\Transactions as ChildTransactions;
 use Model\TransactionsQuery as ChildTransactionsQuery;
 use Model\Map\GameplayersTableMap;
 use Model\Map\GamescoreTableMap;
-use Model\Map\PlayerBuyTableMap;
 use Model\Map\PlayerTableMap;
+use Model\Map\PurchaseTableMap;
 use Model\Map\ReservationTableMap;
 use Model\Map\TransactionsTableMap;
 use Propel\Runtime\Propel;
@@ -110,10 +110,10 @@ abstract class Player implements ActiveRecordInterface
     protected $collGamescoresPartial;
 
     /**
-     * @var        ObjectCollection|ChildPlayerBuy[] Collection to store aggregation of ChildPlayerBuy objects.
+     * @var        ObjectCollection|ChildPurchase[] Collection to store aggregation of ChildPurchase objects.
      */
-    protected $collPlayerBuys;
-    protected $collPlayerBuysPartial;
+    protected $collPurchases;
+    protected $collPurchasesPartial;
 
     /**
      * @var        ObjectCollection|ChildReservation[] Collection to store aggregation of ChildReservation objects.
@@ -155,9 +155,9 @@ abstract class Player implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildPlayerBuy[]
+     * @var ObjectCollection|ChildPurchase[]
      */
-    protected $playerBuysScheduledForDeletion = null;
+    protected $purchasesScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -608,7 +608,7 @@ abstract class Player implements ActiveRecordInterface
 
             $this->collGamescores = null;
 
-            $this->collPlayerBuys = null;
+            $this->collPurchases = null;
 
             $this->collReservations = null;
 
@@ -765,18 +765,18 @@ abstract class Player implements ActiveRecordInterface
                 }
             }
 
-            if ($this->playerBuysScheduledForDeletion !== null) {
-                if (!$this->playerBuysScheduledForDeletion->isEmpty()) {
-                    foreach ($this->playerBuysScheduledForDeletion as $playerBuy) {
+            if ($this->purchasesScheduledForDeletion !== null) {
+                if (!$this->purchasesScheduledForDeletion->isEmpty()) {
+                    foreach ($this->purchasesScheduledForDeletion as $purchase) {
                         // need to save related object because we set the relation to null
-                        $playerBuy->save($con);
+                        $purchase->save($con);
                     }
-                    $this->playerBuysScheduledForDeletion = null;
+                    $this->purchasesScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collPlayerBuys !== null) {
-                foreach ($this->collPlayerBuys as $referrerFK) {
+            if ($this->collPurchases !== null) {
+                foreach ($this->collPurchases as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1033,20 +1033,20 @@ abstract class Player implements ActiveRecordInterface
 
                 $result[$key] = $this->collGamescores->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
-            if (null !== $this->collPlayerBuys) {
+            if (null !== $this->collPurchases) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'playerBuys';
+                        $key = 'purchases';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'player_buys';
+                        $key = 'purchases';
                         break;
                     default:
-                        $key = 'PlayerBuys';
+                        $key = 'Purchases';
                 }
 
-                $result[$key] = $this->collPlayerBuys->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->collPurchases->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collReservations) {
 
@@ -1329,9 +1329,9 @@ abstract class Player implements ActiveRecordInterface
                 }
             }
 
-            foreach ($this->getPlayerBuys() as $relObj) {
+            foreach ($this->getPurchases() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addPlayerBuy($relObj->copy($deepCopy));
+                    $copyObj->addPurchase($relObj->copy($deepCopy));
                 }
             }
 
@@ -1402,8 +1402,8 @@ abstract class Player implements ActiveRecordInterface
             $this->initGamescores();
             return;
         }
-        if ('PlayerBuy' === $relationName) {
-            $this->initPlayerBuys();
+        if ('Purchase' === $relationName) {
+            $this->initPurchases();
             return;
         }
         if ('Reservation' === $relationName) {
@@ -1967,31 +1967,31 @@ abstract class Player implements ActiveRecordInterface
     }
 
     /**
-     * Clears out the collPlayerBuys collection
+     * Clears out the collPurchases collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addPlayerBuys()
+     * @see        addPurchases()
      */
-    public function clearPlayerBuys()
+    public function clearPurchases()
     {
-        $this->collPlayerBuys = null; // important to set this to NULL since that means it is uninitialized
+        $this->collPurchases = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collPlayerBuys collection loaded partially.
+     * Reset is the collPurchases collection loaded partially.
      */
-    public function resetPartialPlayerBuys($v = true)
+    public function resetPartialPurchases($v = true)
     {
-        $this->collPlayerBuysPartial = $v;
+        $this->collPurchasesPartial = $v;
     }
 
     /**
-     * Initializes the collPlayerBuys collection.
+     * Initializes the collPurchases collection.
      *
-     * By default this just sets the collPlayerBuys collection to an empty array (like clearcollPlayerBuys());
+     * By default this just sets the collPurchases collection to an empty array (like clearcollPurchases());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -2000,20 +2000,20 @@ abstract class Player implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initPlayerBuys($overrideExisting = true)
+    public function initPurchases($overrideExisting = true)
     {
-        if (null !== $this->collPlayerBuys && !$overrideExisting) {
+        if (null !== $this->collPurchases && !$overrideExisting) {
             return;
         }
 
-        $collectionClassName = PlayerBuyTableMap::getTableMap()->getCollectionClassName();
+        $collectionClassName = PurchaseTableMap::getTableMap()->getCollectionClassName();
 
-        $this->collPlayerBuys = new $collectionClassName;
-        $this->collPlayerBuys->setModel('\Model\PlayerBuy');
+        $this->collPurchases = new $collectionClassName;
+        $this->collPurchases->setModel('\Model\Purchase');
     }
 
     /**
-     * Gets an array of ChildPlayerBuy objects which contain a foreign key that references this object.
+     * Gets an array of ChildPurchase objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -2023,117 +2023,117 @@ abstract class Player implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildPlayerBuy[] List of ChildPlayerBuy objects
+     * @return ObjectCollection|ChildPurchase[] List of ChildPurchase objects
      * @throws PropelException
      */
-    public function getPlayerBuys(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getPurchases(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collPlayerBuysPartial && !$this->isNew();
-        if (null === $this->collPlayerBuys || null !== $criteria || $partial) {
+        $partial = $this->collPurchasesPartial && !$this->isNew();
+        if (null === $this->collPurchases || null !== $criteria || $partial) {
             if ($this->isNew()) {
                 // return empty collection
-                if (null === $this->collPlayerBuys) {
-                    $this->initPlayerBuys();
+                if (null === $this->collPurchases) {
+                    $this->initPurchases();
                 } else {
-                    $collectionClassName = PlayerBuyTableMap::getTableMap()->getCollectionClassName();
+                    $collectionClassName = PurchaseTableMap::getTableMap()->getCollectionClassName();
 
-                    $collPlayerBuys = new $collectionClassName;
-                    $collPlayerBuys->setModel('\Model\PlayerBuy');
+                    $collPurchases = new $collectionClassName;
+                    $collPurchases->setModel('\Model\Purchase');
 
-                    return $collPlayerBuys;
+                    return $collPurchases;
                 }
             } else {
-                $collPlayerBuys = ChildPlayerBuyQuery::create(null, $criteria)
+                $collPurchases = ChildPurchaseQuery::create(null, $criteria)
                     ->filterByPlayer($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collPlayerBuysPartial && count($collPlayerBuys)) {
-                        $this->initPlayerBuys(false);
+                    if (false !== $this->collPurchasesPartial && count($collPurchases)) {
+                        $this->initPurchases(false);
 
-                        foreach ($collPlayerBuys as $obj) {
-                            if (false == $this->collPlayerBuys->contains($obj)) {
-                                $this->collPlayerBuys->append($obj);
+                        foreach ($collPurchases as $obj) {
+                            if (false == $this->collPurchases->contains($obj)) {
+                                $this->collPurchases->append($obj);
                             }
                         }
 
-                        $this->collPlayerBuysPartial = true;
+                        $this->collPurchasesPartial = true;
                     }
 
-                    return $collPlayerBuys;
+                    return $collPurchases;
                 }
 
-                if ($partial && $this->collPlayerBuys) {
-                    foreach ($this->collPlayerBuys as $obj) {
+                if ($partial && $this->collPurchases) {
+                    foreach ($this->collPurchases as $obj) {
                         if ($obj->isNew()) {
-                            $collPlayerBuys[] = $obj;
+                            $collPurchases[] = $obj;
                         }
                     }
                 }
 
-                $this->collPlayerBuys = $collPlayerBuys;
-                $this->collPlayerBuysPartial = false;
+                $this->collPurchases = $collPurchases;
+                $this->collPurchasesPartial = false;
             }
         }
 
-        return $this->collPlayerBuys;
+        return $this->collPurchases;
     }
 
     /**
-     * Sets a collection of ChildPlayerBuy objects related by a one-to-many relationship
+     * Sets a collection of ChildPurchase objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $playerBuys A Propel collection.
+     * @param      Collection $purchases A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
      * @return $this|ChildPlayer The current object (for fluent API support)
      */
-    public function setPlayerBuys(Collection $playerBuys, ConnectionInterface $con = null)
+    public function setPurchases(Collection $purchases, ConnectionInterface $con = null)
     {
-        /** @var ChildPlayerBuy[] $playerBuysToDelete */
-        $playerBuysToDelete = $this->getPlayerBuys(new Criteria(), $con)->diff($playerBuys);
+        /** @var ChildPurchase[] $purchasesToDelete */
+        $purchasesToDelete = $this->getPurchases(new Criteria(), $con)->diff($purchases);
 
 
-        $this->playerBuysScheduledForDeletion = $playerBuysToDelete;
+        $this->purchasesScheduledForDeletion = $purchasesToDelete;
 
-        foreach ($playerBuysToDelete as $playerBuyRemoved) {
-            $playerBuyRemoved->setPlayer(null);
+        foreach ($purchasesToDelete as $purchaseRemoved) {
+            $purchaseRemoved->setPlayer(null);
         }
 
-        $this->collPlayerBuys = null;
-        foreach ($playerBuys as $playerBuy) {
-            $this->addPlayerBuy($playerBuy);
+        $this->collPurchases = null;
+        foreach ($purchases as $purchase) {
+            $this->addPurchase($purchase);
         }
 
-        $this->collPlayerBuys = $playerBuys;
-        $this->collPlayerBuysPartial = false;
+        $this->collPurchases = $purchases;
+        $this->collPurchasesPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related PlayerBuy objects.
+     * Returns the number of related Purchase objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related PlayerBuy objects.
+     * @return int             Count of related Purchase objects.
      * @throws PropelException
      */
-    public function countPlayerBuys(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countPurchases(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collPlayerBuysPartial && !$this->isNew();
-        if (null === $this->collPlayerBuys || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collPlayerBuys) {
+        $partial = $this->collPurchasesPartial && !$this->isNew();
+        if (null === $this->collPurchases || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collPurchases) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getPlayerBuys());
+                return count($this->getPurchases());
             }
 
-            $query = ChildPlayerBuyQuery::create(null, $criteria);
+            $query = ChildPurchaseQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -2143,28 +2143,28 @@ abstract class Player implements ActiveRecordInterface
                 ->count($con);
         }
 
-        return count($this->collPlayerBuys);
+        return count($this->collPurchases);
     }
 
     /**
-     * Method called to associate a ChildPlayerBuy object to this object
-     * through the ChildPlayerBuy foreign key attribute.
+     * Method called to associate a ChildPurchase object to this object
+     * through the ChildPurchase foreign key attribute.
      *
-     * @param  ChildPlayerBuy $l ChildPlayerBuy
+     * @param  ChildPurchase $l ChildPurchase
      * @return $this|\Model\Player The current object (for fluent API support)
      */
-    public function addPlayerBuy(ChildPlayerBuy $l)
+    public function addPurchase(ChildPurchase $l)
     {
-        if ($this->collPlayerBuys === null) {
-            $this->initPlayerBuys();
-            $this->collPlayerBuysPartial = true;
+        if ($this->collPurchases === null) {
+            $this->initPurchases();
+            $this->collPurchasesPartial = true;
         }
 
-        if (!$this->collPlayerBuys->contains($l)) {
-            $this->doAddPlayerBuy($l);
+        if (!$this->collPurchases->contains($l)) {
+            $this->doAddPurchase($l);
 
-            if ($this->playerBuysScheduledForDeletion and $this->playerBuysScheduledForDeletion->contains($l)) {
-                $this->playerBuysScheduledForDeletion->remove($this->playerBuysScheduledForDeletion->search($l));
+            if ($this->purchasesScheduledForDeletion and $this->purchasesScheduledForDeletion->contains($l)) {
+                $this->purchasesScheduledForDeletion->remove($this->purchasesScheduledForDeletion->search($l));
             }
         }
 
@@ -2172,29 +2172,29 @@ abstract class Player implements ActiveRecordInterface
     }
 
     /**
-     * @param ChildPlayerBuy $playerBuy The ChildPlayerBuy object to add.
+     * @param ChildPurchase $purchase The ChildPurchase object to add.
      */
-    protected function doAddPlayerBuy(ChildPlayerBuy $playerBuy)
+    protected function doAddPurchase(ChildPurchase $purchase)
     {
-        $this->collPlayerBuys[]= $playerBuy;
-        $playerBuy->setPlayer($this);
+        $this->collPurchases[]= $purchase;
+        $purchase->setPlayer($this);
     }
 
     /**
-     * @param  ChildPlayerBuy $playerBuy The ChildPlayerBuy object to remove.
+     * @param  ChildPurchase $purchase The ChildPurchase object to remove.
      * @return $this|ChildPlayer The current object (for fluent API support)
      */
-    public function removePlayerBuy(ChildPlayerBuy $playerBuy)
+    public function removePurchase(ChildPurchase $purchase)
     {
-        if ($this->getPlayerBuys()->contains($playerBuy)) {
-            $pos = $this->collPlayerBuys->search($playerBuy);
-            $this->collPlayerBuys->remove($pos);
-            if (null === $this->playerBuysScheduledForDeletion) {
-                $this->playerBuysScheduledForDeletion = clone $this->collPlayerBuys;
-                $this->playerBuysScheduledForDeletion->clear();
+        if ($this->getPurchases()->contains($purchase)) {
+            $pos = $this->collPurchases->search($purchase);
+            $this->collPurchases->remove($pos);
+            if (null === $this->purchasesScheduledForDeletion) {
+                $this->purchasesScheduledForDeletion = clone $this->collPurchases;
+                $this->purchasesScheduledForDeletion->clear();
             }
-            $this->playerBuysScheduledForDeletion[]= $playerBuy;
-            $playerBuy->setPlayer(null);
+            $this->purchasesScheduledForDeletion[]= $purchase;
+            $purchase->setPlayer(null);
         }
 
         return $this;
@@ -2206,7 +2206,7 @@ abstract class Player implements ActiveRecordInterface
      * an identical criteria, it returns the collection.
      * Otherwise if this Player is new, it will return
      * an empty collection; or if this Player has previously
-     * been saved, it will retrieve related PlayerBuys from storage.
+     * been saved, it will retrieve related Purchases from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
@@ -2215,14 +2215,14 @@ abstract class Player implements ActiveRecordInterface
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildPlayerBuy[] List of ChildPlayerBuy objects
+     * @return ObjectCollection|ChildPurchase[] List of ChildPurchase objects
      */
-    public function getPlayerBuysJoinGame(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getPurchasesJoinGame(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
-        $query = ChildPlayerBuyQuery::create(null, $criteria);
+        $query = ChildPurchaseQuery::create(null, $criteria);
         $query->joinWith('Game', $joinBehavior);
 
-        return $this->getPlayerBuys($query, $con);
+        return $this->getPurchases($query, $con);
     }
 
 
@@ -2231,7 +2231,7 @@ abstract class Player implements ActiveRecordInterface
      * an identical criteria, it returns the collection.
      * Otherwise if this Player is new, it will return
      * an empty collection; or if this Player has previously
-     * been saved, it will retrieve related PlayerBuys from storage.
+     * been saved, it will retrieve related Purchases from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
@@ -2240,14 +2240,14 @@ abstract class Player implements ActiveRecordInterface
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildPlayerBuy[] List of ChildPlayerBuy objects
+     * @return ObjectCollection|ChildPurchase[] List of ChildPurchase objects
      */
-    public function getPlayerBuysJoinShopitems(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getPurchasesJoinShopitems(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
-        $query = ChildPlayerBuyQuery::create(null, $criteria);
+        $query = ChildPurchaseQuery::create(null, $criteria);
         $query->joinWith('Shopitems', $joinBehavior);
 
-        return $this->getPlayerBuys($query, $con);
+        return $this->getPurchases($query, $con);
     }
 
     /**
@@ -3065,8 +3065,8 @@ abstract class Player implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collPlayerBuys) {
-                foreach ($this->collPlayerBuys as $o) {
+            if ($this->collPurchases) {
+                foreach ($this->collPurchases as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -3089,7 +3089,7 @@ abstract class Player implements ActiveRecordInterface
 
         $this->collGameplayerss = null;
         $this->collGamescores = null;
-        $this->collPlayerBuys = null;
+        $this->collPurchases = null;
         $this->collReservations = null;
         $this->collTransactionssRelatedBySourceid = null;
         $this->collTransactionssRelatedByTargetid = null;

@@ -183,13 +183,13 @@ class ShopitemsTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('PlayerBuy', '\\Model\\PlayerBuy', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('Purchase', '\\Model\\Purchase', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':itemid',
     1 => ':id',
   ),
-), null, null, 'PlayerBuys', false);
+), null, null, 'Purchases', false);
     } // buildRelations()
 
     /**

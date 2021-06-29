@@ -38,17 +38,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildShopitemsQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildShopitemsQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildShopitemsQuery leftJoinPlayerBuy($relationAlias = null) Adds a LEFT JOIN clause to the query using the PlayerBuy relation
- * @method     ChildShopitemsQuery rightJoinPlayerBuy($relationAlias = null) Adds a RIGHT JOIN clause to the query using the PlayerBuy relation
- * @method     ChildShopitemsQuery innerJoinPlayerBuy($relationAlias = null) Adds a INNER JOIN clause to the query using the PlayerBuy relation
+ * @method     ChildShopitemsQuery leftJoinPurchase($relationAlias = null) Adds a LEFT JOIN clause to the query using the Purchase relation
+ * @method     ChildShopitemsQuery rightJoinPurchase($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Purchase relation
+ * @method     ChildShopitemsQuery innerJoinPurchase($relationAlias = null) Adds a INNER JOIN clause to the query using the Purchase relation
  *
- * @method     ChildShopitemsQuery joinWithPlayerBuy($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the PlayerBuy relation
+ * @method     ChildShopitemsQuery joinWithPurchase($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Purchase relation
  *
- * @method     ChildShopitemsQuery leftJoinWithPlayerBuy() Adds a LEFT JOIN clause and with to the query using the PlayerBuy relation
- * @method     ChildShopitemsQuery rightJoinWithPlayerBuy() Adds a RIGHT JOIN clause and with to the query using the PlayerBuy relation
- * @method     ChildShopitemsQuery innerJoinWithPlayerBuy() Adds a INNER JOIN clause and with to the query using the PlayerBuy relation
+ * @method     ChildShopitemsQuery leftJoinWithPurchase() Adds a LEFT JOIN clause and with to the query using the Purchase relation
+ * @method     ChildShopitemsQuery rightJoinWithPurchase() Adds a RIGHT JOIN clause and with to the query using the Purchase relation
+ * @method     ChildShopitemsQuery innerJoinWithPurchase() Adds a INNER JOIN clause and with to the query using the Purchase relation
  *
- * @method     \Model\PlayerBuyQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \Model\PurchaseQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildShopitems|null findOne(ConnectionInterface $con = null) Return the first ChildShopitems matching the query
  * @method     ChildShopitems findOneOrCreate(ConnectionInterface $con = null) Return the first ChildShopitems matching the query, or a new ChildShopitems object populated from the query conditions when no match is found
@@ -392,40 +392,40 @@ abstract class ShopitemsQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \Model\PlayerBuy object
+     * Filter the query by a related \Model\Purchase object
      *
-     * @param \Model\PlayerBuy|ObjectCollection $playerBuy the related object to use as filter
+     * @param \Model\Purchase|ObjectCollection $purchase the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildShopitemsQuery The current query, for fluid interface
      */
-    public function filterByPlayerBuy($playerBuy, $comparison = null)
+    public function filterByPurchase($purchase, $comparison = null)
     {
-        if ($playerBuy instanceof \Model\PlayerBuy) {
+        if ($purchase instanceof \Model\Purchase) {
             return $this
-                ->addUsingAlias(ShopitemsTableMap::COL_ID, $playerBuy->getItemid(), $comparison);
-        } elseif ($playerBuy instanceof ObjectCollection) {
+                ->addUsingAlias(ShopitemsTableMap::COL_ID, $purchase->getItemid(), $comparison);
+        } elseif ($purchase instanceof ObjectCollection) {
             return $this
-                ->usePlayerBuyQuery()
-                ->filterByPrimaryKeys($playerBuy->getPrimaryKeys())
+                ->usePurchaseQuery()
+                ->filterByPrimaryKeys($purchase->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByPlayerBuy() only accepts arguments of type \Model\PlayerBuy or Collection');
+            throw new PropelException('filterByPurchase() only accepts arguments of type \Model\Purchase or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the PlayerBuy relation
+     * Adds a JOIN clause to the query using the Purchase relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildShopitemsQuery The current query, for fluid interface
      */
-    public function joinPlayerBuy($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinPurchase($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('PlayerBuy');
+        $relationMap = $tableMap->getRelation('Purchase');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -440,14 +440,14 @@ abstract class ShopitemsQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'PlayerBuy');
+            $this->addJoinObject($join, 'Purchase');
         }
 
         return $this;
     }
 
     /**
-     * Use the PlayerBuy relation PlayerBuy object
+     * Use the Purchase relation Purchase object
      *
      * @see useQuery()
      *
@@ -455,19 +455,19 @@ abstract class ShopitemsQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \Model\PlayerBuyQuery A secondary query class using the current class as primary query
+     * @return \Model\PurchaseQuery A secondary query class using the current class as primary query
      */
-    public function usePlayerBuyQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function usePurchaseQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         return $this
-            ->joinPlayerBuy($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'PlayerBuy', '\Model\PlayerBuyQuery');
+            ->joinPurchase($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Purchase', '\Model\PurchaseQuery');
     }
 
     /**
-     * Use the PlayerBuy relation PlayerBuy object
+     * Use the Purchase relation Purchase object
      *
-     * @param callable(\Model\PlayerBuyQuery):\Model\PlayerBuyQuery $callable A function working on the related query
+     * @param callable(\Model\PurchaseQuery):\Model\PurchaseQuery $callable A function working on the related query
      *
      * @param string|null $relationAlias optional alias for the relation
      *
@@ -475,12 +475,12 @@ abstract class ShopitemsQuery extends ModelCriteria
      *
      * @return $this
      */
-    public function withPlayerBuyQuery(
+    public function withPurchaseQuery(
         callable $callable,
         string $relationAlias = null,
         ?string $joinType = Criteria::LEFT_JOIN
     ) {
-        $relatedQuery = $this->usePlayerBuyQuery(
+        $relatedQuery = $this->usePurchaseQuery(
             $relationAlias,
             $joinType
         );
@@ -490,7 +490,7 @@ abstract class ShopitemsQuery extends ModelCriteria
         return $this;
     }
     /**
-     * Use the relation to PlayerBuy table for an EXISTS query.
+     * Use the relation to Purchase table for an EXISTS query.
      *
      * @see \Propel\Runtime\ActiveQuery\ModelCriteria::useExistsQuery()
      *
@@ -498,26 +498,26 @@ abstract class ShopitemsQuery extends ModelCriteria
      * @param string|null $modelAlias sets an alias for the nested query
      * @param string $typeOfExists Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS
      *
-     * @return \Model\PlayerBuyQuery The inner query object of the EXISTS statement
+     * @return \Model\PurchaseQuery The inner query object of the EXISTS statement
      */
-    public function usePlayerBuyExistsQuery($modelAlias = null, $queryClass = null, $typeOfExists = 'EXISTS')
+    public function usePurchaseExistsQuery($modelAlias = null, $queryClass = null, $typeOfExists = 'EXISTS')
     {
-        return $this->useExistsQuery('PlayerBuy', $modelAlias, $queryClass, $typeOfExists);
+        return $this->useExistsQuery('Purchase', $modelAlias, $queryClass, $typeOfExists);
     }
 
     /**
-     * Use the relation to PlayerBuy table for a NOT EXISTS query.
+     * Use the relation to Purchase table for a NOT EXISTS query.
      *
-     * @see usePlayerBuyExistsQuery()
+     * @see usePurchaseExistsQuery()
      *
      * @param string|null $modelAlias sets an alias for the nested query
      * @param string|null $queryClass Allows to use a custom query class for the exists query, like ExtendedBookQuery::class
      *
-     * @return \Model\PlayerBuyQuery The inner query object of the NOT EXISTS statement
+     * @return \Model\PurchaseQuery The inner query object of the NOT EXISTS statement
      */
-    public function usePlayerBuyNotExistsQuery($modelAlias = null, $queryClass = null)
+    public function usePurchaseNotExistsQuery($modelAlias = null, $queryClass = null)
     {
-        return $this->useExistsQuery('PlayerBuy', $modelAlias, $queryClass, 'NOT EXISTS');
+        return $this->useExistsQuery('Purchase', $modelAlias, $queryClass, 'NOT EXISTS');
     }
     /**
      * Exclude object from result
