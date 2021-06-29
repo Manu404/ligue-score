@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database name="default" defaultIdMethod="native" namespace="\Model" defaultPhpNamingMethod="underscore">
+  <table name="game" idMethod="native" phpName="Game">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="type" phpName="Type" type="INTEGER"/>
+    <column name="dayid" phpName="Dayid" type="INTEGER"/>
+    <foreign-key foreignTable="gameday" name="game_gameday">
+      <reference local="dayid" foreign="id"/>
+    </foreign-key>
+    <index name="game_day_idx">
+      <index-column name="dayid"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="gameday" idMethod="native" phpName="Gameday">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="date" phpName="Date" type="DATE"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="gamedayruleset" idMethod="native" phpName="Gamedayruleset">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="rulesetid" phpName="Rulesetid" type="INTEGER"/>
+    <column name="dayid" phpName="Dayid" type="INTEGER"/>
+    <column name="gametypeid" phpName="Gametypeid" type="INTEGER"/>
+    <foreign-key foreignTable="gameday" name="gamedayruleset_day">
+      <reference local="dayid" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="ruleset" name="gamedayruleset_ruleset">
+      <reference local="rulesetid" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="gametype" name="gamedayruleset_type">
+      <reference local="gametypeid" foreign="id"/>
+    </foreign-key>
+    <index name="gamedayruleset_day_idx">
+      <index-column name="dayid"/>
+    </index>
+    <index name="gamedayruleset_type_idx">
+      <index-column name="gametypeid"/>
+    </index>
+    <index name="ruleset_idx">
+      <index-column name="rulesetid"/>
+      <index-column name="dayid"/>
+      <index-column name="gametypeid"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="gameplayers" idMethod="native" phpName="Gameplayers">
+    <column name="playerid" phpName="Playerid" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="gameid" phpName="Gameid" type="INTEGER" primaryKey="true" required="true"/>
+    <foreign-key foreignTable="game" name="gameplayers_game">
+      <reference local="gameid" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="player" name="gameplayers_players">
+      <reference local="playerid" foreign="id"/>
+    </foreign-key>
+    <index name="game_players_game_idx">
+      <index-column name="gameid"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="gametype" idMethod="native" phpName="Gametype">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="45"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="player" idMethod="native" phpName="Player">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="45"/>
+    <column name="mail" phpName="Mail" type="VARCHAR" size="45"/>
+    <unique name="name_UNIQUE">
+      <unique-column name="name"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="player_buy" idMethod="native" phpName="PlayerBuy">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="playerid" phpName="Playerid" type="INTEGER"/>
+    <column name="itemid" phpName="Itemid" type="INTEGER"/>
+    <column name="gameid" phpName="Gameid" type="INTEGER"/>
+    <foreign-key foreignTable="game" name="playerbuy_game">
+      <reference local="gameid" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="shopitems" name="playerbuy_item">
+      <reference local="itemid" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="player" name="playerbuy_player">
+      <reference local="playerid" foreign="id"/>
+    </foreign-key>
+    <index name="player_buy_item_idx">
+      <index-column name="itemid"/>
+    </index>
+    <index name="player_buy_player_idx">
+      <index-column name="playerid"/>
+    </index>
+    <index name="player_buy_game_idx">
+      <index-column name="gameid"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="reservation" idMethod="native" phpName="Reservation">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="playerid" phpName="Playerid" type="INTEGER"/>
+    <column name="dayid" phpName="Dayid" type="INTEGER"/>
+    <foreign-key foreignTable="gameday" name="reservation_day">
+      <reference local="dayid" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="player" name="reservation_player">
+      <reference local="playerid" foreign="id"/>
+    </foreign-key>
+    <index name="reservation_day_idx">
+      <index-column name="dayid"/>
+    </index>
+    <index name="reservation_player_idx">
+      <index-column name="playerid"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="rules" idMethod="native" phpName="Rules">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="45"/>
+    <column name="description" phpName="Description" type="VARCHAR" size="1024"/>
+    <column name="delta" phpName="Delta" type="INTEGER"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="ruleset" idMethod="native" phpName="Ruleset">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="45"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="ruleset_rules" idMethod="native" phpName="RulesetRules">
+    <column name="rulesetid" phpName="Rulesetid" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="ruleid" phpName="Ruleid" type="INTEGER" primaryKey="true" required="true"/>
+    <foreign-key foreignTable="rules" name="ruleset_rules_rule">
+      <reference local="ruleid" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="ruleset" name="ruleset_rules_ruleset">
+      <reference local="rulesetid" foreign="id"/>
+    </foreign-key>
+    <index name="rule_idx">
+      <index-column name="ruleid"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="shopitems" idMethod="native" phpName="Shopitems">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="45"/>
+    <column name="description" phpName="Description" type="VARCHAR" size="45"/>
+    <column name="cost" phpName="Cost" type="INTEGER"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="transactions" idMethod="native" phpName="Transactions">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="sourceid" phpName="Sourceid" type="INTEGER"/>
+    <column name="targetid" phpName="Targetid" type="INTEGER"/>
+    <column name="delta" phpName="Delta" type="INTEGER"/>
+    <column name="gameid" phpName="Gameid" type="INTEGER"/>
+    <foreign-key foreignTable="game" name="transacions_game">
+      <reference local="gameid" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="player" name="transacions_source">
+      <reference local="sourceid" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="player" name="transacions_target">
+      <reference local="targetid" foreign="id"/>
+    </foreign-key>
+    <index name="transac_source_idx">
+      <index-column name="sourceid"/>
+    </index>
+    <index name="transac_target_idx">
+      <index-column name="targetid"/>
+    </index>
+    <index name="transac_game_idx">
+      <index-column name="gameid"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+</database>

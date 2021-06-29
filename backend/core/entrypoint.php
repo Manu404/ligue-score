@@ -10,52 +10,6 @@ use Slim\Exception\HttpNotFoundException;
 
 use \Core\Handlers\HandlerBase as HandlerBase;
 
-// class CorsAction
-// {
-//     public function __invoke(\Slim\Http\Request $request, \Slim\Http\Response $response) {
-//         return $response->withHeader('Access-Control-Allow-Origin', '*')
-//             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
-//             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-//             ->withHeader('Access-Control-Allow-Credentials', 'true');
-//     }
-// }
-
-// class CorsMiddleware
-// {
-//     private $router;
-
-//     public function __construct(\Slim\Router $router)
-//     {
-//         $this->router = $router;
-//     }
-//     /**
-//      * Cors middleware invokable class
-//      *
-//      * @param  \Psr\Http\Message\ServerRequestInterface $request  PSR7 request
-//      * @param  \Psr\Http\Message\ResponseInterface      $response PSR7 response
-//      * @param  callable                                 $next     Next middleware
-//      *
-//      * @return \Psr\Http\Message\ResponseInterface
-//      */
-//     public function __invoke($request, $response, $next)
-//     {
-//         // https://www.html5rocks.com/static/images/cors_server_flowchart.png
-//         if ($request->isOptions()
-//             && $request->hasHeader('Origin')
-//             && $request->hasHeader('Access-Control-Request-Method')) {
-//             return $response
-//                 ->withHeader('Access-Control-Allow-Origin', '*')
-//                 ->withHeader('Access-Control-Allow-Headers', '*')
-//                 ->withHeader("Access-Control-Allow-Methods", '*');
-//         } else {
-//             $response = $response
-//                 ->withHeader('Access-Control-Allow-Origin', '*')
-//                 ->withHeader('Access-Control-Expose-Headers', '*');
-//             return $next($request, $response);
-//         }
-//     }
-// }
-
 class EntryPoint {
 
     private $slimApp;
@@ -97,31 +51,50 @@ class EntryPoint {
 
     function InitializeDatabase()
     {
-        // $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
-        // $serviceContainer->checkVersion('2.0.0-dev');
-        // $serviceContainer->setAdapterClass('default', 'mysql');
-        // $manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
-        // $manager->setConfiguration(array (
-        //     'dsn' => 'mysql:host=localhost;port=3306;dbname=aceu',
-        //     'user' => 'root',
-        //     'password' => "Password1234$",
-        //     'settings' =>
-        //         array (
-        //             'charset' => 'utf8',
-        //             'queries' =>
-        //                 array (
-        //                 ),
-        //         ),
-        //     'classname' => '\\Propel\\Runtime\\Connection\\ConnectionWrapper',
-        //     'model_paths' =>
-        //         array (
-        //             0 => 'src',
-        //             1 => 'vendor',
-        //         ),
-        // ));
-        // $manager->setName('default');
-        // $serviceContainer->setConnectionManager('default', $manager);
-        // $serviceContainer->setDefaultDatasource('default');
+        $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
+        $serviceContainer->checkVersion(2);
+        $serviceContainer->setAdapterClass('default', 'mysql');
+        $manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
+        $manager->setConfiguration(array (
+          'dsn' => 'mysql:host=192.168.89.1;port=3306;dbname=mtg_league',
+          'user' => 'mtg_league',
+          'password' => 'tmp123',
+          'settings' =>
+          array (
+            'charset' => 'utf8',
+            'queries' =>
+            array (
+            ),
+          ),
+          'classname' => '\\Propel\\Runtime\\Connection\\ConnectionWrapper',
+          'model_paths' =>
+          array (
+            0 => 'src',
+            1 => 'vendor',
+          ),
+        ));
+        $manager->setName('default');
+        $serviceContainer->setConnectionManager('default', $manager);
+        $serviceContainer->setDefaultDatasource('default');
+        
+        $serviceContainer->initDatabaseMaps(array (
+            'default' => 
+            array (
+              0 => '\\Model\\Map\\GameTableMap',
+              1 => '\\Model\\Map\\GamedayTableMap',
+              2 => '\\Model\\Map\\GamedayrulesetTableMap',
+              3 => '\\Model\\Map\\GameplayersTableMap',
+              4 => '\\Model\\Map\\GametypeTableMap',
+              5 => '\\Model\\Map\\PlayerBuyTableMap',
+              6 => '\\Model\\Map\\PlayerTableMap',
+              7 => '\\Model\\Map\\ReservationTableMap',
+              8 => '\\Model\\Map\\RulesTableMap',
+              9 => '\\Model\\Map\\RulesetRulesTableMap',
+              10 => '\\Model\\Map\\RulesetTableMap',
+              11 => '\\Model\\Map\\ShopitemsTableMap',
+              12 => '\\Model\\Map\\TransactionsTableMap',
+            ),
+          ));
     }
 
     function RegisterErrorHandler () {

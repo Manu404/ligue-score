@@ -2,3 +2,6 @@
 /backend/vendor
 /backend/composer.phar
 /backend/composer.lock
+/backend/propel.yml.dist
+/backend/propel
+/backend/generated-*

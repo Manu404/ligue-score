@@ -1,0 +1,10 @@
+propel:
+    database:
+        connections:
+            default:
+                adapter: mysql
+                dsn: mysql:host=192.168.89.1;port=3306;dbname=mtg_league
+                user: mtg_league
+                password: tmp123
+                settings:
+                    charset: utf8
