@@ -1,0 +1,4 @@
+/backend/build
+/backend/vendor
+/backend/composer.phar
+/backend/composer.lock
