@@ -6,6 +6,8 @@ use \Exception;
 use \PDO;
 use Model\Gameplayers as ChildGameplayers;
 use Model\GameplayersQuery as ChildGameplayersQuery;
+use Model\Gamescore as ChildGamescore;
+use Model\GamescoreQuery as ChildGamescoreQuery;
 use Model\Player as ChildPlayer;
 use Model\PlayerBuy as ChildPlayerBuy;
 use Model\PlayerBuyQuery as ChildPlayerBuyQuery;
@@ -15,6 +17,7 @@ use Model\ReservationQuery as ChildReservationQuery;
 use Model\Transactions as ChildTransactions;
 use Model\TransactionsQuery as ChildTransactionsQuery;
 use Model\Map\GameplayersTableMap;
+use Model\Map\GamescoreTableMap;
 use Model\Map\PlayerBuyTableMap;
 use Model\Map\PlayerTableMap;
 use Model\Map\ReservationTableMap;
@@ -101,6 +104,12 @@ abstract class Player implements ActiveRecordInterface
     protected $collGameplayerssPartial;
 
     /**
+     * @var        ObjectCollection|ChildGamescore[] Collection to store aggregation of ChildGamescore objects.
+     */
+    protected $collGamescores;
+    protected $collGamescoresPartial;
+
+    /**
      * @var        ObjectCollection|ChildPlayerBuy[] Collection to store aggregation of ChildPlayerBuy objects.
      */
     protected $collPlayerBuys;
@@ -137,6 +146,12 @@ abstract class Player implements ActiveRecordInterface
      * @var ObjectCollection|ChildGameplayers[]
      */
     protected $gameplayerssScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildGamescore[]
+     */
+    protected $gamescoresScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -591,6 +606,8 @@ abstract class Player implements ActiveRecordInterface
 
             $this->collGameplayerss = null;
 
+            $this->collGamescores = null;
+
             $this->collPlayerBuys = null;
 
             $this->collReservations = null;
@@ -724,6 +741,24 @@ abstract class Player implements ActiveRecordInterface
 
             if ($this->collGameplayerss !== null) {
                 foreach ($this->collGameplayerss as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->gamescoresScheduledForDeletion !== null) {
+                if (!$this->gamescoresScheduledForDeletion->isEmpty()) {
+                    foreach ($this->gamescoresScheduledForDeletion as $gamescore) {
+                        // need to save related object because we set the relation to null
+                        $gamescore->save($con);
+                    }
+                    $this->gamescoresScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collGamescores !== null) {
+                foreach ($this->collGamescores as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -971,6 +1006,21 @@ abstract class Player implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->collGameplayerss->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collGamescores) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'gamescores';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'gamescores';
+                        break;
+                    default:
+                        $key = 'Gamescores';
+                }
+
+                $result[$key] = $this->collGamescores->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collPlayerBuys) {
 
@@ -1263,6 +1313,12 @@ abstract class Player implements ActiveRecordInterface
                 }
             }
 
+            foreach ($this->getGamescores() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addGamescore($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getPlayerBuys() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addPlayerBuy($relObj->copy($deepCopy));
@@ -1329,6 +1385,10 @@ abstract class Player implements ActiveRecordInterface
     {
         if ('Gameplayers' === $relationName) {
             $this->initGameplayerss();
+            return;
+        }
+        if ('Gamescore' === $relationName) {
+            $this->initGamescores();
             return;
         }
         if ('PlayerBuy' === $relationName) {
@@ -1609,6 +1669,290 @@ abstract class Player implements ActiveRecordInterface
         $query->joinWith('Game', $joinBehavior);
 
         return $this->getGameplayerss($query, $con);
+    }
+
+    /**
+     * Clears out the collGamescores collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addGamescores()
+     */
+    public function clearGamescores()
+    {
+        $this->collGamescores = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collGamescores collection loaded partially.
+     */
+    public function resetPartialGamescores($v = true)
+    {
+        $this->collGamescoresPartial = $v;
+    }
+
+    /**
+     * Initializes the collGamescores collection.
+     *
+     * By default this just sets the collGamescores collection to an empty array (like clearcollGamescores());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initGamescores($overrideExisting = true)
+    {
+        if (null !== $this->collGamescores && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = GamescoreTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collGamescores = new $collectionClassName;
+        $this->collGamescores->setModel('\Model\Gamescore');
+    }
+
+    /**
+     * Gets an array of ChildGamescore objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildPlayer is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildGamescore[] List of ChildGamescore objects
+     * @throws PropelException
+     */
+    public function getGamescores(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collGamescoresPartial && !$this->isNew();
+        if (null === $this->collGamescores || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collGamescores) {
+                    $this->initGamescores();
+                } else {
+                    $collectionClassName = GamescoreTableMap::getTableMap()->getCollectionClassName();
+
+                    $collGamescores = new $collectionClassName;
+                    $collGamescores->setModel('\Model\Gamescore');
+
+                    return $collGamescores;
+                }
+            } else {
+                $collGamescores = ChildGamescoreQuery::create(null, $criteria)
+                    ->filterByPlayer($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collGamescoresPartial && count($collGamescores)) {
+                        $this->initGamescores(false);
+
+                        foreach ($collGamescores as $obj) {
+                            if (false == $this->collGamescores->contains($obj)) {
+                                $this->collGamescores->append($obj);
+                            }
+                        }
+
+                        $this->collGamescoresPartial = true;
+                    }
+
+                    return $collGamescores;
+                }
+
+                if ($partial && $this->collGamescores) {
+                    foreach ($this->collGamescores as $obj) {
+                        if ($obj->isNew()) {
+                            $collGamescores[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collGamescores = $collGamescores;
+                $this->collGamescoresPartial = false;
+            }
+        }
+
+        return $this->collGamescores;
+    }
+
+    /**
+     * Sets a collection of ChildGamescore objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $gamescores A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildPlayer The current object (for fluent API support)
+     */
+    public function setGamescores(Collection $gamescores, ConnectionInterface $con = null)
+    {
+        /** @var ChildGamescore[] $gamescoresToDelete */
+        $gamescoresToDelete = $this->getGamescores(new Criteria(), $con)->diff($gamescores);
+
+
+        $this->gamescoresScheduledForDeletion = $gamescoresToDelete;
+
+        foreach ($gamescoresToDelete as $gamescoreRemoved) {
+            $gamescoreRemoved->setPlayer(null);
+        }
+
+        $this->collGamescores = null;
+        foreach ($gamescores as $gamescore) {
+            $this->addGamescore($gamescore);
+        }
+
+        $this->collGamescores = $gamescores;
+        $this->collGamescoresPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Gamescore objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Gamescore objects.
+     * @throws PropelException
+     */
+    public function countGamescores(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collGamescoresPartial && !$this->isNew();
+        if (null === $this->collGamescores || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collGamescores) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getGamescores());
+            }
+
+            $query = ChildGamescoreQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByPlayer($this)
+                ->count($con);
+        }
+
+        return count($this->collGamescores);
+    }
+
+    /**
+     * Method called to associate a ChildGamescore object to this object
+     * through the ChildGamescore foreign key attribute.
+     *
+     * @param  ChildGamescore $l ChildGamescore
+     * @return $this|\Model\Player The current object (for fluent API support)
+     */
+    public function addGamescore(ChildGamescore $l)
+    {
+        if ($this->collGamescores === null) {
+            $this->initGamescores();
+            $this->collGamescoresPartial = true;
+        }
+
+        if (!$this->collGamescores->contains($l)) {
+            $this->doAddGamescore($l);
+
+            if ($this->gamescoresScheduledForDeletion and $this->gamescoresScheduledForDeletion->contains($l)) {
+                $this->gamescoresScheduledForDeletion->remove($this->gamescoresScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildGamescore $gamescore The ChildGamescore object to add.
+     */
+    protected function doAddGamescore(ChildGamescore $gamescore)
+    {
+        $this->collGamescores[]= $gamescore;
+        $gamescore->setPlayer($this);
+    }
+
+    /**
+     * @param  ChildGamescore $gamescore The ChildGamescore object to remove.
+     * @return $this|ChildPlayer The current object (for fluent API support)
+     */
+    public function removeGamescore(ChildGamescore $gamescore)
+    {
+        if ($this->getGamescores()->contains($gamescore)) {
+            $pos = $this->collGamescores->search($gamescore);
+            $this->collGamescores->remove($pos);
+            if (null === $this->gamescoresScheduledForDeletion) {
+                $this->gamescoresScheduledForDeletion = clone $this->collGamescores;
+                $this->gamescoresScheduledForDeletion->clear();
+            }
+            $this->gamescoresScheduledForDeletion[]= $gamescore;
+            $gamescore->setPlayer(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Player is new, it will return
+     * an empty collection; or if this Player has previously
+     * been saved, it will retrieve related Gamescores from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Player.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildGamescore[] List of ChildGamescore objects
+     */
+    public function getGamescoresJoinGame(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildGamescoreQuery::create(null, $criteria);
+        $query->joinWith('Game', $joinBehavior);
+
+        return $this->getGamescores($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Player is new, it will return
+     * an empty collection; or if this Player has previously
+     * been saved, it will retrieve related Gamescores from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Player.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildGamescore[] List of ChildGamescore objects
+     */
+    public function getGamescoresJoinRules(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildGamescoreQuery::create(null, $criteria);
+        $query->joinWith('Rules', $joinBehavior);
+
+        return $this->getGamescores($query, $con);
     }
 
     /**
@@ -2705,6 +3049,11 @@ abstract class Player implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collGamescores) {
+                foreach ($this->collGamescores as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collPlayerBuys) {
                 foreach ($this->collPlayerBuys as $o) {
                     $o->clearAllReferences($deep);
@@ -2728,6 +3077,7 @@ abstract class Player implements ActiveRecordInterface
         } // if ($deep)
 
         $this->collGameplayerss = null;
+        $this->collGamescores = null;
         $this->collPlayerBuys = null;
         $this->collReservations = null;
         $this->collTransactionssRelatedBySourceid = null;

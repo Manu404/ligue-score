@@ -7,6 +7,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use Slim\Middleware\HttpBasicAuthentication;
 use Slim\Exception\HttpNotFoundException;
+use Slim\Container;
 
 use \Core\Handlers\HandlerBase as HandlerBase;
 

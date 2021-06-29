@@ -183,6 +183,13 @@ class RulesTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Gamescore', '\\Model\\Gamescore', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':ruleid',
+    1 => ':id',
+  ),
+), null, null, 'Gamescores', false);
         $this->addRelation('RulesetRules', '\\Model\\RulesetRules', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (

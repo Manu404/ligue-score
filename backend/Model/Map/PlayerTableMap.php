@@ -178,6 +178,13 @@ class PlayerTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'Gameplayerss', false);
+        $this->addRelation('Gamescore', '\\Model\\Gamescore', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':playerid',
+    1 => ':id',
+  ),
+), null, null, 'Gamescores', false);
         $this->addRelation('PlayerBuy', '\\Model\\PlayerBuy', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (

@@ -46,6 +46,16 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPlayerQuery rightJoinWithGameplayers() Adds a RIGHT JOIN clause and with to the query using the Gameplayers relation
  * @method     ChildPlayerQuery innerJoinWithGameplayers() Adds a INNER JOIN clause and with to the query using the Gameplayers relation
  *
+ * @method     ChildPlayerQuery leftJoinGamescore($relationAlias = null) Adds a LEFT JOIN clause to the query using the Gamescore relation
+ * @method     ChildPlayerQuery rightJoinGamescore($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Gamescore relation
+ * @method     ChildPlayerQuery innerJoinGamescore($relationAlias = null) Adds a INNER JOIN clause to the query using the Gamescore relation
+ *
+ * @method     ChildPlayerQuery joinWithGamescore($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Gamescore relation
+ *
+ * @method     ChildPlayerQuery leftJoinWithGamescore() Adds a LEFT JOIN clause and with to the query using the Gamescore relation
+ * @method     ChildPlayerQuery rightJoinWithGamescore() Adds a RIGHT JOIN clause and with to the query using the Gamescore relation
+ * @method     ChildPlayerQuery innerJoinWithGamescore() Adds a INNER JOIN clause and with to the query using the Gamescore relation
+ *
  * @method     ChildPlayerQuery leftJoinPlayerBuy($relationAlias = null) Adds a LEFT JOIN clause to the query using the PlayerBuy relation
  * @method     ChildPlayerQuery rightJoinPlayerBuy($relationAlias = null) Adds a RIGHT JOIN clause to the query using the PlayerBuy relation
  * @method     ChildPlayerQuery innerJoinPlayerBuy($relationAlias = null) Adds a INNER JOIN clause to the query using the PlayerBuy relation
@@ -86,7 +96,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildPlayerQuery rightJoinWithTransactionsRelatedByTargetid() Adds a RIGHT JOIN clause and with to the query using the TransactionsRelatedByTargetid relation
  * @method     ChildPlayerQuery innerJoinWithTransactionsRelatedByTargetid() Adds a INNER JOIN clause and with to the query using the TransactionsRelatedByTargetid relation
  *
- * @method     \Model\GameplayersQuery|\Model\PlayerBuyQuery|\Model\ReservationQuery|\Model\TransactionsQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \Model\GameplayersQuery|\Model\GamescoreQuery|\Model\PlayerBuyQuery|\Model\ReservationQuery|\Model\TransactionsQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildPlayer|null findOne(ConnectionInterface $con = null) Return the first ChildPlayer matching the query
  * @method     ChildPlayer findOneOrCreate(ConnectionInterface $con = null) Return the first ChildPlayer matching the query, or a new ChildPlayer object populated from the query conditions when no match is found
@@ -512,6 +522,134 @@ abstract class PlayerQuery extends ModelCriteria
     public function useGameplayersNotExistsQuery($modelAlias = null, $queryClass = null)
     {
         return $this->useExistsQuery('Gameplayers', $modelAlias, $queryClass, 'NOT EXISTS');
+    }
+    /**
+     * Filter the query by a related \Model\Gamescore object
+     *
+     * @param \Model\Gamescore|ObjectCollection $gamescore the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildPlayerQuery The current query, for fluid interface
+     */
+    public function filterByGamescore($gamescore, $comparison = null)
+    {
+        if ($gamescore instanceof \Model\Gamescore) {
+            return $this
+                ->addUsingAlias(PlayerTableMap::COL_ID, $gamescore->getPlayerid(), $comparison);
+        } elseif ($gamescore instanceof ObjectCollection) {
+            return $this
+                ->useGamescoreQuery()
+                ->filterByPrimaryKeys($gamescore->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByGamescore() only accepts arguments of type \Model\Gamescore or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Gamescore relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildPlayerQuery The current query, for fluid interface
+     */
+    public function joinGamescore($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Gamescore');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Gamescore');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Gamescore relation Gamescore object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Model\GamescoreQuery A secondary query class using the current class as primary query
+     */
+    public function useGamescoreQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinGamescore($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Gamescore', '\Model\GamescoreQuery');
+    }
+
+    /**
+     * Use the Gamescore relation Gamescore object
+     *
+     * @param callable(\Model\GamescoreQuery):\Model\GamescoreQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withGamescoreQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::LEFT_JOIN
+    ) {
+        $relatedQuery = $this->useGamescoreQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
+    }
+    /**
+     * Use the relation to Gamescore table for an EXISTS query.
+     *
+     * @see \Propel\Runtime\ActiveQuery\ModelCriteria::useExistsQuery()
+     *
+     * @param string|null $queryClass Allows to use a custom query class for the exists query, like ExtendedBookQuery::class
+     * @param string|null $modelAlias sets an alias for the nested query
+     * @param string $typeOfExists Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS
+     *
+     * @return \Model\GamescoreQuery The inner query object of the EXISTS statement
+     */
+    public function useGamescoreExistsQuery($modelAlias = null, $queryClass = null, $typeOfExists = 'EXISTS')
+    {
+        return $this->useExistsQuery('Gamescore', $modelAlias, $queryClass, $typeOfExists);
+    }
+
+    /**
+     * Use the relation to Gamescore table for a NOT EXISTS query.
+     *
+     * @see useGamescoreExistsQuery()
+     *
+     * @param string|null $modelAlias sets an alias for the nested query
+     * @param string|null $queryClass Allows to use a custom query class for the exists query, like ExtendedBookQuery::class
+     *
+     * @return \Model\GamescoreQuery The inner query object of the NOT EXISTS statement
+     */
+    public function useGamescoreNotExistsQuery($modelAlias = null, $queryClass = null)
+    {
+        return $this->useExistsQuery('Gamescore', $modelAlias, $queryClass, 'NOT EXISTS');
     }
     /**
      * Filter the query by a related \Model\PlayerBuy object
