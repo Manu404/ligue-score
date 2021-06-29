@@ -170,7 +170,7 @@ class GamescoreTableMap extends TableMap
         $this->setIdentifierQuoting(false);
         $this->setClassName('\\Model\\Gamescore');
         $this->setPackage('Model');
-        $this->setUseIdGenerator(false);
+        $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addForeignKey('playerid', 'Playerid', 'INTEGER', 'player', 'id', false, null, null);
@@ -468,6 +468,10 @@ class GamescoreTableMap extends TableMap
             $criteria = clone $criteria; // rename for clarity
         } else {
             $criteria = $criteria->buildCriteria(); // build Criteria from Gamescore object
+        }
+
+        if ($criteria->containsKey(GamescoreTableMap::COL_ID) && $criteria->keyContainsValue(GamescoreTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.GamescoreTableMap::COL_ID.')');
         }
 
 

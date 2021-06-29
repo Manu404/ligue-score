@@ -148,7 +148,7 @@ class GamedayTableMap extends TableMap
         $this->setIdentifierQuoting(false);
         $this->setClassName('\\Model\\Gameday');
         $this->setPackage('Model');
-        $this->setUseIdGenerator(false);
+        $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('date', 'Date', 'DATE', false, null, null);
@@ -436,6 +436,10 @@ class GamedayTableMap extends TableMap
             $criteria = clone $criteria; // rename for clarity
         } else {
             $criteria = $criteria->buildCriteria(); // build Criteria from Gameday object
+        }
+
+        if ($criteria->containsKey(GamedayTableMap::COL_ID) && $criteria->keyContainsValue(GamedayTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.GamedayTableMap::COL_ID.')');
         }
 
 

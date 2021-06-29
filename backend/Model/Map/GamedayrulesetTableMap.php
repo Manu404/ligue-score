@@ -170,7 +170,7 @@ class GamedayrulesetTableMap extends TableMap
         $this->setIdentifierQuoting(false);
         $this->setClassName('\\Model\\Gamedayruleset');
         $this->setPackage('Model');
-        $this->setUseIdGenerator(false);
+        $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addForeignKey('rulesetid', 'Rulesetid', 'INTEGER', 'ruleset', 'id', false, null, null);
@@ -190,17 +190,17 @@ class GamedayrulesetTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, null, false);
-        $this->addRelation('Ruleset', '\\Model\\Ruleset', RelationMap::MANY_TO_ONE, array (
-  0 =>
-  array (
-    0 => ':rulesetid',
-    1 => ':id',
-  ),
-), null, null, null, false);
         $this->addRelation('Gametype', '\\Model\\Gametype', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
     0 => ':gametypeid',
+    1 => ':id',
+  ),
+), null, null, null, false);
+        $this->addRelation('Ruleset', '\\Model\\Ruleset', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':rulesetid',
     1 => ':id',
   ),
 ), null, null, null, false);
@@ -468,6 +468,10 @@ class GamedayrulesetTableMap extends TableMap
             $criteria = clone $criteria; // rename for clarity
         } else {
             $criteria = $criteria->buildCriteria(); // build Criteria from Gamedayruleset object
+        }
+
+        if ($criteria->containsKey(GamedayrulesetTableMap::COL_ID) && $criteria->keyContainsValue(GamedayrulesetTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.GamedayrulesetTableMap::COL_ID.')');
         }
 
 

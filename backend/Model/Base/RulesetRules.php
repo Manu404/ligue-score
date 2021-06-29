@@ -971,14 +971,14 @@ abstract class RulesetRules implements ActiveRecordInterface
         $validPrimaryKeyFKs = 2;
         $primaryKeyFKs = [];
 
-        //relation ruleset_rules_rule to table rules
+        //relation ruleset_rules_rules_id to table rules
         if ($this->aRules && $hash = spl_object_hash($this->aRules)) {
             $primaryKeyFKs[] = $hash;
         } else {
             $validPrimaryKeyFKs = false;
         }
 
-        //relation ruleset_rules_ruleset to table ruleset
+        //relation ruleset_rules_ruleset_rulesetid to table ruleset
         if ($this->aRuleset && $hash = spl_object_hash($this->aRuleset)) {
             $primaryKeyFKs[] = $hash;
         } else {

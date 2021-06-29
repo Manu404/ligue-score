@@ -148,7 +148,7 @@ class GametypeTableMap extends TableMap
         $this->setIdentifierQuoting(false);
         $this->setClassName('\\Model\\Gametype');
         $this->setPackage('Model');
-        $this->setUseIdGenerator(false);
+        $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', false, 45, null);
@@ -422,6 +422,10 @@ class GametypeTableMap extends TableMap
             $criteria = clone $criteria; // rename for clarity
         } else {
             $criteria = $criteria->buildCriteria(); // build Criteria from Gametype object
+        }
+
+        if ($criteria->containsKey(GametypeTableMap::COL_ID) && $criteria->keyContainsValue(GametypeTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.GametypeTableMap::COL_ID.')');
         }
 
 

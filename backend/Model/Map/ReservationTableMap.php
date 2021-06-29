@@ -159,7 +159,7 @@ class ReservationTableMap extends TableMap
         $this->setIdentifierQuoting(false);
         $this->setClassName('\\Model\\Reservation');
         $this->setPackage('Model');
-        $this->setUseIdGenerator(false);
+        $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addForeignKey('playerid', 'Playerid', 'INTEGER', 'player', 'id', false, null, null);
@@ -445,6 +445,10 @@ class ReservationTableMap extends TableMap
             $criteria = clone $criteria; // rename for clarity
         } else {
             $criteria = $criteria->buildCriteria(); // build Criteria from Reservation object
+        }
+
+        if ($criteria->containsKey(ReservationTableMap::COL_ID) && $criteria->keyContainsValue(ReservationTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ReservationTableMap::COL_ID.')');
         }
 
 

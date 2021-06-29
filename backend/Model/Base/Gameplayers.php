@@ -971,14 +971,14 @@ abstract class Gameplayers implements ActiveRecordInterface
         $validPrimaryKeyFKs = 2;
         $primaryKeyFKs = [];
 
-        //relation gameplayers_game to table game
+        //relation gameplayers_game_gameid to table game
         if ($this->aGame && $hash = spl_object_hash($this->aGame)) {
             $primaryKeyFKs[] = $hash;
         } else {
             $validPrimaryKeyFKs = false;
         }
 
-        //relation gameplayers_players to table player
+        //relation gameplayers_players_playerid to table player
         if ($this->aPlayer && $hash = spl_object_hash($this->aPlayer)) {
             $primaryKeyFKs[] = $hash;
         } else {

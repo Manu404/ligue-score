@@ -174,7 +174,7 @@ class PlayerBuyTableMap extends TableMap
         $this->setIdentifierQuoting(false);
         $this->setClassName('\\Model\\PlayerBuy');
         $this->setPackage('Model');
-        $this->setUseIdGenerator(false);
+        $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addForeignKey('playerid', 'Playerid', 'INTEGER', 'player', 'id', false, null, null);
@@ -472,6 +472,10 @@ class PlayerBuyTableMap extends TableMap
             $criteria = clone $criteria; // rename for clarity
         } else {
             $criteria = $criteria->buildCriteria(); // build Criteria from PlayerBuy object
+        }
+
+        if ($criteria->containsKey(PlayerBuyTableMap::COL_ID) && $criteria->keyContainsValue(PlayerBuyTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.PlayerBuyTableMap::COL_ID.')');
         }
 
 

@@ -99,14 +99,14 @@ abstract class Gamedayruleset implements ActiveRecordInterface
     protected $aGameday;
 
     /**
-     * @var        ChildRuleset
-     */
-    protected $aRuleset;
-
-    /**
      * @var        ChildGametype
      */
     protected $aGametype;
+
+    /**
+     * @var        ChildRuleset
+     */
+    protected $aRuleset;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -598,8 +598,8 @@ abstract class Gamedayruleset implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aGameday = null;
-            $this->aRuleset = null;
             $this->aGametype = null;
+            $this->aRuleset = null;
         } // if (deep)
     }
 
@@ -715,18 +715,18 @@ abstract class Gamedayruleset implements ActiveRecordInterface
                 $this->setGameday($this->aGameday);
             }
 
-            if ($this->aRuleset !== null) {
-                if ($this->aRuleset->isModified() || $this->aRuleset->isNew()) {
-                    $affectedRows += $this->aRuleset->save($con);
-                }
-                $this->setRuleset($this->aRuleset);
-            }
-
             if ($this->aGametype !== null) {
                 if ($this->aGametype->isModified() || $this->aGametype->isNew()) {
                     $affectedRows += $this->aGametype->save($con);
                 }
                 $this->setGametype($this->aGametype);
+            }
+
+            if ($this->aRuleset !== null) {
+                if ($this->aRuleset->isModified() || $this->aRuleset->isNew()) {
+                    $affectedRows += $this->aRuleset->save($con);
+                }
+                $this->setRuleset($this->aRuleset);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -760,6 +760,10 @@ abstract class Gamedayruleset implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
+        $this->modifiedColumns[GamedayrulesetTableMap::COL_ID] = true;
+        if (null !== $this->id) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . GamedayrulesetTableMap::COL_ID . ')');
+        }
 
          // check the columns in natural order for more readable SQL queries
         if ($this->isColumnModified(GamedayrulesetTableMap::COL_ID)) {
@@ -804,6 +808,13 @@ abstract class Gamedayruleset implements ActiveRecordInterface
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
         }
+
+        try {
+            $pk = $con->lastInsertId();
+        } catch (Exception $e) {
+            throw new PropelException('Unable to get autoincrement id.', 0, $e);
+        }
+        $this->setId($pk);
 
         $this->setNew(false);
     }
@@ -920,21 +931,6 @@ abstract class Gamedayruleset implements ActiveRecordInterface
 
                 $result[$key] = $this->aGameday->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->aRuleset) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'ruleset';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'ruleset';
-                        break;
-                    default:
-                        $key = 'Ruleset';
-                }
-
-                $result[$key] = $this->aRuleset->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->aGametype) {
 
                 switch ($keyType) {
@@ -949,6 +945,21 @@ abstract class Gamedayruleset implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->aGametype->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aRuleset) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'ruleset';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'ruleset';
+                        break;
+                    default:
+                        $key = 'Ruleset';
+                }
+
+                $result[$key] = $this->aRuleset->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -1175,12 +1186,12 @@ abstract class Gamedayruleset implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setId($this->getId());
         $copyObj->setRulesetid($this->getRulesetid());
         $copyObj->setDayid($this->getDayid());
         $copyObj->setGametypeid($this->getGametypeid());
         if ($makeNew) {
             $copyObj->setNew(true);
+            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1258,57 +1269,6 @@ abstract class Gamedayruleset implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildRuleset object.
-     *
-     * @param  ChildRuleset|null $v
-     * @return $this|\Model\Gamedayruleset The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setRuleset(ChildRuleset $v = null)
-    {
-        if ($v === null) {
-            $this->setRulesetid(NULL);
-        } else {
-            $this->setRulesetid($v->getId());
-        }
-
-        $this->aRuleset = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildRuleset object, it will not be re-added.
-        if ($v !== null) {
-            $v->addGamedayruleset($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ChildRuleset object
-     *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildRuleset|null The associated ChildRuleset object.
-     * @throws PropelException
-     */
-    public function getRuleset(ConnectionInterface $con = null)
-    {
-        if ($this->aRuleset === null && ($this->rulesetid != 0)) {
-            $this->aRuleset = ChildRulesetQuery::create()->findPk($this->rulesetid, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aRuleset->addGamedayrulesets($this);
-             */
-        }
-
-        return $this->aRuleset;
-    }
-
-    /**
      * Declares an association between this object and a ChildGametype object.
      *
      * @param  ChildGametype|null $v
@@ -1360,6 +1320,57 @@ abstract class Gamedayruleset implements ActiveRecordInterface
     }
 
     /**
+     * Declares an association between this object and a ChildRuleset object.
+     *
+     * @param  ChildRuleset|null $v
+     * @return $this|\Model\Gamedayruleset The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setRuleset(ChildRuleset $v = null)
+    {
+        if ($v === null) {
+            $this->setRulesetid(NULL);
+        } else {
+            $this->setRulesetid($v->getId());
+        }
+
+        $this->aRuleset = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildRuleset object, it will not be re-added.
+        if ($v !== null) {
+            $v->addGamedayruleset($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildRuleset object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildRuleset|null The associated ChildRuleset object.
+     * @throws PropelException
+     */
+    public function getRuleset(ConnectionInterface $con = null)
+    {
+        if ($this->aRuleset === null && ($this->rulesetid != 0)) {
+            $this->aRuleset = ChildRulesetQuery::create()->findPk($this->rulesetid, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aRuleset->addGamedayrulesets($this);
+             */
+        }
+
+        return $this->aRuleset;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -1369,11 +1380,11 @@ abstract class Gamedayruleset implements ActiveRecordInterface
         if (null !== $this->aGameday) {
             $this->aGameday->removeGamedayruleset($this);
         }
-        if (null !== $this->aRuleset) {
-            $this->aRuleset->removeGamedayruleset($this);
-        }
         if (null !== $this->aGametype) {
             $this->aGametype->removeGamedayruleset($this);
+        }
+        if (null !== $this->aRuleset) {
+            $this->aRuleset->removeGamedayruleset($this);
         }
         $this->id = null;
         $this->rulesetid = null;
@@ -1400,8 +1411,8 @@ abstract class Gamedayruleset implements ActiveRecordInterface
         } // if ($deep)
 
         $this->aGameday = null;
-        $this->aRuleset = null;
         $this->aGametype = null;
+        $this->aRuleset = null;
     }
 
     /**

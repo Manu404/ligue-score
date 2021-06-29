@@ -48,16 +48,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGamedayrulesetQuery rightJoinWithGameday() Adds a RIGHT JOIN clause and with to the query using the Gameday relation
  * @method     ChildGamedayrulesetQuery innerJoinWithGameday() Adds a INNER JOIN clause and with to the query using the Gameday relation
  *
- * @method     ChildGamedayrulesetQuery leftJoinRuleset($relationAlias = null) Adds a LEFT JOIN clause to the query using the Ruleset relation
- * @method     ChildGamedayrulesetQuery rightJoinRuleset($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Ruleset relation
- * @method     ChildGamedayrulesetQuery innerJoinRuleset($relationAlias = null) Adds a INNER JOIN clause to the query using the Ruleset relation
- *
- * @method     ChildGamedayrulesetQuery joinWithRuleset($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Ruleset relation
- *
- * @method     ChildGamedayrulesetQuery leftJoinWithRuleset() Adds a LEFT JOIN clause and with to the query using the Ruleset relation
- * @method     ChildGamedayrulesetQuery rightJoinWithRuleset() Adds a RIGHT JOIN clause and with to the query using the Ruleset relation
- * @method     ChildGamedayrulesetQuery innerJoinWithRuleset() Adds a INNER JOIN clause and with to the query using the Ruleset relation
- *
  * @method     ChildGamedayrulesetQuery leftJoinGametype($relationAlias = null) Adds a LEFT JOIN clause to the query using the Gametype relation
  * @method     ChildGamedayrulesetQuery rightJoinGametype($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Gametype relation
  * @method     ChildGamedayrulesetQuery innerJoinGametype($relationAlias = null) Adds a INNER JOIN clause to the query using the Gametype relation
@@ -68,7 +58,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildGamedayrulesetQuery rightJoinWithGametype() Adds a RIGHT JOIN clause and with to the query using the Gametype relation
  * @method     ChildGamedayrulesetQuery innerJoinWithGametype() Adds a INNER JOIN clause and with to the query using the Gametype relation
  *
- * @method     \Model\GamedayQuery|\Model\RulesetQuery|\Model\GametypeQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildGamedayrulesetQuery leftJoinRuleset($relationAlias = null) Adds a LEFT JOIN clause to the query using the Ruleset relation
+ * @method     ChildGamedayrulesetQuery rightJoinRuleset($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Ruleset relation
+ * @method     ChildGamedayrulesetQuery innerJoinRuleset($relationAlias = null) Adds a INNER JOIN clause to the query using the Ruleset relation
+ *
+ * @method     ChildGamedayrulesetQuery joinWithRuleset($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Ruleset relation
+ *
+ * @method     ChildGamedayrulesetQuery leftJoinWithRuleset() Adds a LEFT JOIN clause and with to the query using the Ruleset relation
+ * @method     ChildGamedayrulesetQuery rightJoinWithRuleset() Adds a RIGHT JOIN clause and with to the query using the Ruleset relation
+ * @method     ChildGamedayrulesetQuery innerJoinWithRuleset() Adds a INNER JOIN clause and with to the query using the Ruleset relation
+ *
+ * @method     \Model\GamedayQuery|\Model\GametypeQuery|\Model\RulesetQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildGamedayruleset|null findOne(ConnectionInterface $con = null) Return the first ChildGamedayruleset matching the query
  * @method     ChildGamedayruleset findOneOrCreate(ConnectionInterface $con = null) Return the first ChildGamedayruleset matching the query, or a new ChildGamedayruleset object populated from the query conditions when no match is found
@@ -582,138 +582,6 @@ abstract class GamedayrulesetQuery extends ModelCriteria
         return $this->useExistsQuery('Gameday', $modelAlias, $queryClass, 'NOT EXISTS');
     }
     /**
-     * Filter the query by a related \Model\Ruleset object
-     *
-     * @param \Model\Ruleset|ObjectCollection $ruleset The related object(s) to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @throws \Propel\Runtime\Exception\PropelException
-     *
-     * @return ChildGamedayrulesetQuery The current query, for fluid interface
-     */
-    public function filterByRuleset($ruleset, $comparison = null)
-    {
-        if ($ruleset instanceof \Model\Ruleset) {
-            return $this
-                ->addUsingAlias(GamedayrulesetTableMap::COL_RULESETID, $ruleset->getId(), $comparison);
-        } elseif ($ruleset instanceof ObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(GamedayrulesetTableMap::COL_RULESETID, $ruleset->toKeyValue('PrimaryKey', 'Id'), $comparison);
-        } else {
-            throw new PropelException('filterByRuleset() only accepts arguments of type \Model\Ruleset or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Ruleset relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return $this|ChildGamedayrulesetQuery The current query, for fluid interface
-     */
-    public function joinRuleset($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Ruleset');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Ruleset');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Ruleset relation Ruleset object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return \Model\RulesetQuery A secondary query class using the current class as primary query
-     */
-    public function useRulesetQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        return $this
-            ->joinRuleset($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Ruleset', '\Model\RulesetQuery');
-    }
-
-    /**
-     * Use the Ruleset relation Ruleset object
-     *
-     * @param callable(\Model\RulesetQuery):\Model\RulesetQuery $callable A function working on the related query
-     *
-     * @param string|null $relationAlias optional alias for the relation
-     *
-     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return $this
-     */
-    public function withRulesetQuery(
-        callable $callable,
-        string $relationAlias = null,
-        ?string $joinType = Criteria::LEFT_JOIN
-    ) {
-        $relatedQuery = $this->useRulesetQuery(
-            $relationAlias,
-            $joinType
-        );
-        $callable($relatedQuery);
-        $relatedQuery->endUse();
-
-        return $this;
-    }
-    /**
-     * Use the relation to Ruleset table for an EXISTS query.
-     *
-     * @see \Propel\Runtime\ActiveQuery\ModelCriteria::useExistsQuery()
-     *
-     * @param string|null $queryClass Allows to use a custom query class for the exists query, like ExtendedBookQuery::class
-     * @param string|null $modelAlias sets an alias for the nested query
-     * @param string $typeOfExists Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS
-     *
-     * @return \Model\RulesetQuery The inner query object of the EXISTS statement
-     */
-    public function useRulesetExistsQuery($modelAlias = null, $queryClass = null, $typeOfExists = 'EXISTS')
-    {
-        return $this->useExistsQuery('Ruleset', $modelAlias, $queryClass, $typeOfExists);
-    }
-
-    /**
-     * Use the relation to Ruleset table for a NOT EXISTS query.
-     *
-     * @see useRulesetExistsQuery()
-     *
-     * @param string|null $modelAlias sets an alias for the nested query
-     * @param string|null $queryClass Allows to use a custom query class for the exists query, like ExtendedBookQuery::class
-     *
-     * @return \Model\RulesetQuery The inner query object of the NOT EXISTS statement
-     */
-    public function useRulesetNotExistsQuery($modelAlias = null, $queryClass = null)
-    {
-        return $this->useExistsQuery('Ruleset', $modelAlias, $queryClass, 'NOT EXISTS');
-    }
-    /**
      * Filter the query by a related \Model\Gametype object
      *
      * @param \Model\Gametype|ObjectCollection $gametype The related object(s) to use as filter
@@ -844,6 +712,138 @@ abstract class GamedayrulesetQuery extends ModelCriteria
     public function useGametypeNotExistsQuery($modelAlias = null, $queryClass = null)
     {
         return $this->useExistsQuery('Gametype', $modelAlias, $queryClass, 'NOT EXISTS');
+    }
+    /**
+     * Filter the query by a related \Model\Ruleset object
+     *
+     * @param \Model\Ruleset|ObjectCollection $ruleset The related object(s) to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return ChildGamedayrulesetQuery The current query, for fluid interface
+     */
+    public function filterByRuleset($ruleset, $comparison = null)
+    {
+        if ($ruleset instanceof \Model\Ruleset) {
+            return $this
+                ->addUsingAlias(GamedayrulesetTableMap::COL_RULESETID, $ruleset->getId(), $comparison);
+        } elseif ($ruleset instanceof ObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(GamedayrulesetTableMap::COL_RULESETID, $ruleset->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByRuleset() only accepts arguments of type \Model\Ruleset or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Ruleset relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildGamedayrulesetQuery The current query, for fluid interface
+     */
+    public function joinRuleset($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Ruleset');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Ruleset');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Ruleset relation Ruleset object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Model\RulesetQuery A secondary query class using the current class as primary query
+     */
+    public function useRulesetQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinRuleset($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Ruleset', '\Model\RulesetQuery');
+    }
+
+    /**
+     * Use the Ruleset relation Ruleset object
+     *
+     * @param callable(\Model\RulesetQuery):\Model\RulesetQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withRulesetQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::LEFT_JOIN
+    ) {
+        $relatedQuery = $this->useRulesetQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
+    }
+    /**
+     * Use the relation to Ruleset table for an EXISTS query.
+     *
+     * @see \Propel\Runtime\ActiveQuery\ModelCriteria::useExistsQuery()
+     *
+     * @param string|null $queryClass Allows to use a custom query class for the exists query, like ExtendedBookQuery::class
+     * @param string|null $modelAlias sets an alias for the nested query
+     * @param string $typeOfExists Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS
+     *
+     * @return \Model\RulesetQuery The inner query object of the EXISTS statement
+     */
+    public function useRulesetExistsQuery($modelAlias = null, $queryClass = null, $typeOfExists = 'EXISTS')
+    {
+        return $this->useExistsQuery('Ruleset', $modelAlias, $queryClass, $typeOfExists);
+    }
+
+    /**
+     * Use the relation to Ruleset table for a NOT EXISTS query.
+     *
+     * @see useRulesetExistsQuery()
+     *
+     * @param string|null $modelAlias sets an alias for the nested query
+     * @param string|null $queryClass Allows to use a custom query class for the exists query, like ExtendedBookQuery::class
+     *
+     * @return \Model\RulesetQuery The inner query object of the NOT EXISTS statement
+     */
+    public function useRulesetNotExistsQuery($modelAlias = null, $queryClass = null)
+    {
+        return $this->useExistsQuery('Ruleset', $modelAlias, $queryClass, 'NOT EXISTS');
     }
     /**
      * Exclude object from result

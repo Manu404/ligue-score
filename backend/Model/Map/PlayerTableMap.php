@@ -159,7 +159,7 @@ class PlayerTableMap extends TableMap
         $this->setIdentifierQuoting(false);
         $this->setClassName('\\Model\\Player');
         $this->setPackage('Model');
-        $this->setUseIdGenerator(false);
+        $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', false, 45, null);
@@ -473,6 +473,10 @@ class PlayerTableMap extends TableMap
             $criteria = clone $criteria; // rename for clarity
         } else {
             $criteria = $criteria->buildCriteria(); // build Criteria from Player object
+        }
+
+        if ($criteria->containsKey(PlayerTableMap::COL_ID) && $criteria->keyContainsValue(PlayerTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.PlayerTableMap::COL_ID.')');
         }
 
 
