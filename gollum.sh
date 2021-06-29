@@ -20,10 +20,10 @@ while test $# -gt 0; do
 		echo "Build backend"; 
 		source ./build_backend.sh; 
 		exit;;
-	publish:be:local)
+	publish:be)
 		echo "Publish backend to local test"; 
 		source ./publish_local.sh; 
-		exit;;
+		exit;;    
 	help)
 		echo "======================================================================================"
 		echo "=============== b e == c a r e f u l./:%£*¨%µ%*jdj'*¨£%$^)z¨^àçgu^ ============ damn ="
