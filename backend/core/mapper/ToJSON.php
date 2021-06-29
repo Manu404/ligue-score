@@ -5,6 +5,7 @@ namespace Core\Mapper;
 use DateTime;
 use DateTimeZone;
 use \Model\Player;
+use \Model\Shopitems;
 
 class ToJSON {
     public static function Player(Player $data){
@@ -13,7 +14,16 @@ class ToJSON {
             "name" => $data->getName()
         );
     }
-    
+
+    public static function ShopItem(ShopItems $data){
+        return array(
+            "id" => $data->getId(),
+            "name" => $data->getName(),
+            "detail" => $data->getDescription(),
+            "cost" => $data->getCost()
+        );
+    }
+
     private static function FormatDate(DateTime $date){
         // create a $dt object with the UTC timezone
         $dt = new DateTime($date->format("Y-m-d H:i:s"), new DateTimeZone('UTC'));

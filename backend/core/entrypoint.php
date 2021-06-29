@@ -147,6 +147,8 @@ class EntryPoint {
     function RegisterHandlers() {
         $TestHandler = new \Core\Handler\TestHandler($this->slimApp);
         $PlayerHandler = new \Core\Handler\PlayerHandler($this->slimApp);
+        $ShopHandler = new \Core\Handler\ShopHandler($this->slimApp);
+
 
         $this->slimApp->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
             throw new \Slim\Exception\HttpNotFoundException($request);
