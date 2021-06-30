@@ -151,6 +151,7 @@ class EntryPoint {
         $RuleHandler = new \Core\Handler\RuleHandler($this->slimApp);
         $GdHandler = new \Core\Handler\GameDayHandler($this->slimApp);
         $GtHandler = new \Core\Handler\GameTypeHandler($this->slimApp);
+        $RkHandler = new \Core\Handler\RankingHandler($this->slimApp);
 
 
         $this->slimApp->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
