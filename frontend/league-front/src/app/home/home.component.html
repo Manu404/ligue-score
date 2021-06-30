@@ -1,8 +1,12 @@
 <section class="mat-typography">
     <h1>Classement général</h1>
 
+    <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+        <fa-icon [icon]="faSync"></fa-icon>
+    </button>
+
     <mat-divider></mat-divider><br />
-    <table mat-table [dataSource]="results" class="mat-elevation-z8 mat-table table">
+    <table mat-table [dataSource]="rankings" class="mat-elevation-z8 mat-table table">
         <!-- Position Column -->
         <ng-container matColumnDef="rank">
             <th mat-header-cell *matHeaderCellDef> Classement </th>

@@ -3,3 +3,9 @@ export interface GeneralRanking {
     name: string;
     score: number;
   }
+
+  export interface GetGeneralRankingResponse {
+    status: number;
+    message: string;
+    result: GeneralRanking[];
+  }
