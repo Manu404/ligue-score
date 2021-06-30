@@ -145,14 +145,15 @@ class EntryPoint {
     }
 
     function RegisterHandlers() {
-        $TestHandler = new \Core\Handler\TestHandler($this->slimApp);
-        $PlayerHandler = new \Core\Handler\PlayerHandler($this->slimApp);
-        $ShopHandler = new \Core\Handler\ShopHandler($this->slimApp);
-        $RuleHandler = new \Core\Handler\RuleHandler($this->slimApp);
-        $GdHandler = new \Core\Handler\GameDayHandler($this->slimApp);
-        $GtHandler = new \Core\Handler\GameTypeHandler($this->slimApp);
+        // $TestHandler = new \Core\Handler\TestHandler($this->slimApp);
+        // $PlayerHandler = new \Core\Handler\PlayerHandler($this->slimApp);
+        // $ShopHandler = new \Core\Handler\ShopHandler($this->slimApp);
+        // $RuleHandler = new \Core\Handler\RuleHandler($this->slimApp);
+        // $GdHandler = new \Core\Handler\GameDayHandler($this->slimApp);
+        // $GtHandler = new \Core\Handler\GameTypeHandler($this->slimApp);
+        
         $RkHandler = new \Core\Handler\RankingHandler($this->slimApp);
-
+        $CatalogHandler = new \Core\Handler\CatalogHandler($this->slimApp);
 
         $this->slimApp->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
             throw new \Slim\Exception\HttpNotFoundException($request);
