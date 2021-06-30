@@ -5,6 +5,8 @@ import { GeneralRanking } from '../model/general_ranking';
 import { faTrophy, faSync } from '@fortawesome/free-solid-svg-icons';
 import { MessageService } from '../service/message.service';
 import { RankingRepositoryService } from '../repository/ranking-repository.service';
+import { LoadingService } from '../service/loading.service';
+import { delay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -12,12 +14,11 @@ import { RankingRepositoryService } from '../repository/ranking-repository.servi
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  displayedColumns: string[] = ['demo-rank', 'demo-name', 'demo-score'];
   faTrophy = faTrophy;
   faSync = faSync;
   rankings: GeneralRanking[] = [];
 
-  constructor(private rankingService: RankingRepositoryService, private messageService: MessageService) {
+  constructor(private rankingService: RankingRepositoryService, private loadingService: LoadingService) {
    }
 
   ngOnInit(): void {
@@ -25,7 +26,11 @@ export class HomeComponent implements OnInit {
   }  
   
   getGeneralRanking(): void {
-    this.rankingService.Get().subscribe(rankings => this.rankings = this.rankingService.GeneralRankings );
+    this.loadingService.IsLoading = true;
+    this.rankingService.Get().subscribe(rankings => { 
+      this.rankings = this.rankingService.GeneralRankings;
+      this.loadingService.IsLoading = false;
+    });
   }
 
 }

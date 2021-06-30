@@ -6,6 +6,12 @@
         <div style="width: 96%; margin: 2%; display: block;">
             <app-home ></app-home>
         </div>
+
+        <div class="loading" [ngClass]="{'hidden': loadingService.IsLoading === false}">
+            <div class="loading-spinner">
+                <mat-spinner></mat-spinner>
+            </div>
+        </div>
     </mat-sidenav-content>
 </mat-sidenav-container>
 
@@ -16,3 +22,5 @@
         </button>
     </p>
 </div>
+
+

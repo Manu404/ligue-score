@@ -2,7 +2,7 @@
     <h1>Classement général</h1>
 
     <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
-        <fa-icon [icon]="faSync"></fa-icon>
+        <fa-icon (click)="getGeneralRanking()" [icon]="faSync"></fa-icon>
     </button>
 
     <mat-divider></mat-divider><br />

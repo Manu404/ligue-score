@@ -10,6 +10,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
@@ -34,6 +35,7 @@ import { MenuComponent } from './menu/menu.component';
     MatListModule,
     MatIconModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
     FontAwesomeModule
   ],
   providers: [],

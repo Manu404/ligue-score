@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { LoadingService } from './service/loading.service';
 
 @Component({
   selector: 'app-root',
@@ -9,4 +10,7 @@ export class AppComponent {
   events: string[] = [];
   opened: boolean = true;
   title = 'league-front';
+
+
+  constructor(public loadingService:LoadingService) { }
 }
