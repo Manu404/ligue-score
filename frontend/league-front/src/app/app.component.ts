@@ -6,5 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  events: string[] = [];
+  opened: boolean = true;
   title = 'league-front';
 }

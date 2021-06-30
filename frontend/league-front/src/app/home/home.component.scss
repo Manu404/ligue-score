@@ -1,17 +1,38 @@
 .table {
     width: 100%;
+    max-width: 500px;
   }
+
+.mat-column-rank {
+    width: 50px;
+    border-right: 1px solid currentColor;
+    padding-right: 24px;
+    text-align: center;
+}
+
+.mat-column-name {
+    padding-left: 10px ;
+}
   
 .mat-row .mat-cell {
-border-bottom: 1px solid transparent;
-border-top: 1px solid transparent;
-cursor: pointer;
+    border-bottom: 1px solid transparent;
+    border-top: 1px solid transparent;
+    cursor: pointer;
 }
 
 .mat-row:hover .mat-cell {
-border-color: currentColor;
+    border-color: currentColor;
 }
 
-.demo-row-is-clicked {
-font-weight: bold;
+.gold {
+    color: #ffd700;
+    font-weight: bold;
+}
+.silver {
+    color: silver;
+    font-weight: bold;
+}
+.bronze {
+    color: #B08D57;
+    font-weight: bold;
 }
