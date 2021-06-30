@@ -1,0 +1,152 @@
+{
+	"info": {
+		"_postman_id": "0bc28e66-83cd-46a1-aac3-4f141373ea8d",
+		"name": "mtg ligue",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GetPlayerList",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/player/",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"player",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetItems",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/shop/",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"shop",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetRules",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/rule/",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"rule",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetGamedays",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/game/day/",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"game",
+						"day",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetGametype",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/game/type/",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"game",
+						"type",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Smoke test\", function() {",
+					"    pm.response.to.have.jsonBody(\"message\");",
+					"})"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseurl",
+			"value": "localhost/index.php"
+		},
+		{
+			"key": "apiversion",
+			"value": "api/v1"
+		},
+		{
+			"key": "protocol",
+			"value": "http"
+		},
+		{
+			"key": "endpoint",
+			"value": "{{protocol}}://{{baseurl}}/{{apiversion}}"
+		}
+	]
+}
