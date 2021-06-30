@@ -12,7 +12,7 @@ use \Core\Handler\HandlerBase as HandlerBase;
 use \Model\GametypeQuery;
 use \Core\Mapper\ToJSON;
 
-class RankingHandler extends HandlerBase {
+class MatchHandler extends HandlerBase {
 
     private $app;
 
@@ -23,15 +23,15 @@ class RankingHandler extends HandlerBase {
     }
 
     private function InitializeGet() {
-        $this->app->get('/api/v1/ranking/general/', function (Request $request, Response $response, array $args) {  
+        $this->app->get('/api/v1/match/summary/', function (Request $request, Response $response, array $args) {  
             $conn = Propel::getConnection();
-            $sql = 'SELECT * FROM total_per_player';
+            $sql = 'SELECT * FROM total_per_match';
             $query = $conn->prepare($sql);
             $query->execute();
             $result = array();
             $i = 1;
             foreach ($query->fetchAll() as $row) {
-                array_push($result, array("rank" => $i, "id" => $row['playerid'], "score" => $row['total']));
+                array_push($result, array("gameid" => $row['gameid'], "playerid" => $row['playerid'], "total" => $row['total']));
                 $i+=1;
             }
 

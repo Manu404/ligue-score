@@ -154,6 +154,7 @@ class EntryPoint {
         
         $RkHandler = new \Core\Handler\RankingHandler($this->slimApp);
         $CatalogHandler = new \Core\Handler\CatalogHandler($this->slimApp);
+        $MatchHandler = new \Core\Handler\MatchHandler($this->slimApp);
 
         $this->slimApp->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
             throw new \Slim\Exception\HttpNotFoundException($request);
