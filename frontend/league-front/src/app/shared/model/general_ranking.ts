@@ -1,6 +1,6 @@
 export interface GeneralRanking {
     rank: number;
-    name: string;
+    id: number;
     score: number;
   }
 
