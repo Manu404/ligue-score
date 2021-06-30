@@ -7,6 +7,7 @@ use DateTimeZone;
 use \Model\Player;
 use \Model\Shopitems;
 use \Model\Rules;
+use \Model\Gameday;
 
 class ToJSON {
     public static function Player(Player $data){
@@ -33,6 +34,14 @@ class ToJSON {
             "delta" => $data->getDelta()
         );
     }
+
+    public static function Gameday(Gameday $data){
+        return array(
+            "id" => $data->getId(),
+            "date" => ToJSON::FormatDate($data->getDate()),
+        );
+    }
+
 
     private static function FormatDate(DateTime $date){
         // create a $dt object with the UTC timezone

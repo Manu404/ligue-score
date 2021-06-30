@@ -149,6 +149,7 @@ class EntryPoint {
         $PlayerHandler = new \Core\Handler\PlayerHandler($this->slimApp);
         $ShopHandler = new \Core\Handler\ShopHandler($this->slimApp);
         $RuleHandler = new \Core\Handler\RuleHandler($this->slimApp);
+        $GdHandler = new \Core\Handler\GameDayHandler($this->slimApp);
 
 
         $this->slimApp->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
