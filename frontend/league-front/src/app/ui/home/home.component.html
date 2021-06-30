@@ -1,9 +1,12 @@
 <section class="mat-typography">
-    <h1>Classement général</h1>
 
-    <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
-        <fa-icon (click)="getGeneralRanking()" [icon]="faSync"></fa-icon>
-    </button>
+    <div class="titleContainer">        
+        <button mat-mini-fab style="display: inline; transform: scale(.8);">
+            <fa-icon (click)="getGeneralRanking()" [icon]="faSync"></fa-icon>
+        </button>      
+        <h1 style="display: inline; text-transform: uppercase; font-size: 23px; margin-top: 10px; vertical-align: middle;">Classement général</h1>  
+    </div>
+
 
     <mat-divider></mat-divider><br />
     <table mat-table [dataSource]="rankings" class="mat-elevation-z8 mat-table table">
