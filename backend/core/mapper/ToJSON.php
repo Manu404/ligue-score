@@ -6,6 +6,7 @@ use DateTime;
 use DateTimeZone;
 use \Model\Player;
 use \Model\Shopitems;
+use \Model\Rules;
 
 class ToJSON {
     public static function Player(Player $data){
@@ -21,6 +22,15 @@ class ToJSON {
             "name" => $data->getName(),
             "detail" => $data->getDescription(),
             "cost" => $data->getCost()
+        );
+    }
+
+    public static function Rules(Rules $data){
+        return array(
+            "id" => $data->getId(),
+            "name" => $data->getName(),
+            "detail" => $data->getDescription(),
+            "delta" => $data->getDelta()
         );
     }
 
