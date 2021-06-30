@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { GeneralRanking } from '../model/general_ranking';
+import { GeneralRanking } from '../../shared/model/general_ranking';
 
 
 import { faTrophy, faSync } from '@fortawesome/free-solid-svg-icons';
-import { MessageService } from '../service/message.service';
-import { RankingRepositoryService } from '../repository/ranking-repository.service';
-import { LoadingService } from '../service/loading.service';
+import { MessageService } from '../../shared/service/message.service';
+import { RankingRepositoryService } from '../../shared/repository/ranking-repository.service';
+import { LoadingService } from '../../shared/service/loading.service';
 import { delay } from 'rxjs/operators';
 
 @Component({

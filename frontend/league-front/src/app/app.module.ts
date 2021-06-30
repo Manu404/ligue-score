@@ -15,14 +15,23 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
-import { MenuComponent } from './menu/menu.component';
+import { HomeComponent } from './ui/home/home.component';
+import { MenuComponent } from './ui/menu/menu.component';
+import { AppRoutingModule } from './app-routing.module';
+import { InfosComponent } from './ui/infos/infos.component';
+import { MatchsComponent } from './ui/matchs/matchs.component';
+import { StatsComponent } from './ui/stats/stats.component';
+import { ContactComponent } from './contact/contact.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    MenuComponent
+    MenuComponent,
+    InfosComponent,
+    MatchsComponent,
+    StatsComponent,
+    ContactComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +45,8 @@ import { MenuComponent } from './menu/menu.component';
     MatIconModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]

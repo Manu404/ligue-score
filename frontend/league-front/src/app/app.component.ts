@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LoadingService } from './service/loading.service';
+import { LoadingService } from './shared/service/loading.service';
 
 @Component({
   selector: 'app-root',

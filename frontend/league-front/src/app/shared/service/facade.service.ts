@@ -12,6 +12,6 @@ export class FacadeService {
   constructor(private http: HttpClient) { }
 
   public GetGeneralRankingJson() : Observable<GeneralRanking[]> {
-    return this.http.get<GetGeneralRankingResponse>("http://localhost/index.php/api/v1/ranking/general/").pipe( map( response => response.result ));;
+    return this.http.get<GetGeneralRankingResponse>("https://backend.edhleague.be/index.php/api/v1/ranking/general/").pipe( map( response => response.result ));;
   }
 }
