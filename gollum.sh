@@ -20,6 +20,14 @@ while test $# -gt 0; do
 		echo "Build backend"; 
 		source ./build_backend.sh; 
 		exit;;
+	build:fe)
+		echo "Build frontend"; 
+		source ./build_frontend.sh; 
+		exit;;
+	debug:fe)
+		echo "Debug frontend"; 
+		source ./debug_frontend.sh; 
+		exit;;
 	publish:be)
 		echo "Publish backend to local test"; 
 		source ./publish_local.sh; 
@@ -29,7 +37,7 @@ while test $# -gt 0; do
 		source ./upload_backend.sh; 
 		exit;;   
 	publish:fe:remote)
-		echo "Publish backend to remote server"; 
+		echo "Publish frontend to remote server"; 
 		source ./upload_frontend.sh; 
 		exit;;   
 	help)
