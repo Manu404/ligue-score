@@ -1,9 +1,11 @@
 #!/bin/bash
 
-cd ~/bedh/
+TARGET_FOLDER=/var/www/html/bedh
 
-rm -rf /var/www/html/bedh
+cd ~/
 
-mkdir /var/www/html/bedh
+rm -rf $TARGET_FOLDER
 
-tar -xzvf ~/bedh/bedh.tgz -C /var/www/html/bedh
+mkdir $TARGET_FOLDER
+
+tar -xzvf ~/bedh.tgz -C $TARGET_FOLDER
