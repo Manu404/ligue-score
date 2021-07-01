@@ -11,19 +11,21 @@ use \Slim\App;
 use \Core\Handler\HandlerBase as HandlerBase;
 use \Model\GametypeQuery;
 use \Core\Mapper\ToJSON;
+use Model\Base\GameQuery;
 
-class MatchHandler extends HandlerBase {
+class GameHandler extends HandlerBase {
 
     private $app;
 
     function __construct(App $app)
     {
         $this->app = $app;
+        $this->InitializeGetSummary();
         $this->InitializeGet();
     }
 
-    private function InitializeGet() {
-        $this->app->get('/api/v1/match/summary/', function (Request $request, Response $response, array $args) {  
+    private function InitializeGetSummary() {
+        $this->app->get('/api/v1/game/summary/', function (Request $request, Response $response, array $args) {  
             $conn = Propel::getConnection();
             $sql = 'SELECT * FROM total_per_match';
             $query = $conn->prepare($sql);
@@ -37,6 +39,22 @@ class MatchHandler extends HandlerBase {
 
             $stmt = null;
             return HandlerBase::PrepareGetResponse($result, $response);     
+        });
+    }
+
+    private function GetGames(){
+        $query = GameQuery::create();
+        $queryResults = $query->find();
+        $result = array();
+        foreach($queryResults as $queryResult) {
+            array_push($result, ToJSON::Game($queryResult));
+        }       
+        return $result;
+    }
+
+    private function InitializeGet() {
+        $this->app->get('/api/v1/game/', function (Request $request, Response $response, array $args) {  
+            return HandlerBase::PrepareGetResponse($this->GetGames(), $response);     
         });
     }
 }

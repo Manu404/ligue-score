@@ -9,6 +9,8 @@ use \Model\Shopitems;
 use \Model\Rules;
 use \Model\Gameday;
 use \Model\Gametype;
+use \Model\Game;
+
 
 class ToJSON {
     public static function Player(Player $data){
@@ -47,6 +49,14 @@ class ToJSON {
         return array(
             "id" => $data->getId(),
             "name" => $data->getName(),
+        );
+    }
+
+    public static function Game(Game $data){
+        return array(
+            "id" => $data->getId(),
+            "dayid" => $data->getDayid(),
+            "typeid" => $data->getType(),
         );
     }
 
