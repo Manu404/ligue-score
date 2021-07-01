@@ -4,8 +4,8 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class UrlBuilderService {
-  localhostDevUrl: string = "http://localhost/index.php/api/v1";
-  productionUrl: string = "https://backend.edhleague.be/index.php/api/v1";
+  localhostDevUrl: string = "http://localhost/api/v1";
+  productionUrl: string = "https://backend.edhleague.be/api/v1";
 
   constructor() { }
 

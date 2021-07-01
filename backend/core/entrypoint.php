@@ -21,7 +21,7 @@ class EntryPoint {
 
     function __construct(){
         $this->slimApp = AppFactory::create();
-        $this->slimApp->setBasePath("/index.php");
+        //$this->slimApp->setBasePath("/index.php");
         // $this->basicHttpAuthenticator = new \Slim\Middleware\HttpBasicAuthentication([
         //     "authenticator" => new HttpBasicAuthenticator(),
         //     "realm" => "Protected",

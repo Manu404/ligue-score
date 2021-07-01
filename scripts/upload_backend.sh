@@ -8,7 +8,7 @@ rm -rf $PUBLISH_ARCHIVE
 
 cd $TARGET_BUILD_ROOT
 
-tar -czvf ../$PUBLISH_ARCHIVE ./*
+tar -czvf ../$PUBLISH_ARCHIVE .
 
 scp -P 11122 ../$PUBLISH_ARCHIVE elman@51.178.17.89:/home/elman/
 
