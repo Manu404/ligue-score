@@ -11,6 +11,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSortModule } from '@angular/material/sort';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
@@ -19,7 +20,7 @@ import { HomeComponent } from './ui/home/home.component';
 import { MenuComponent } from './ui/menu/menu.component';
 import { AppRoutingModule } from './app-routing.module';
 import { InfosComponent } from './ui/infos/infos.component';
-import { MatchsComponent } from './ui/matchs/matchs.component';
+import { MatchListComponent } from './ui/match-list/match-list.component';
 import { StatsComponent } from './ui/stats/stats.component';
 import { ContactComponent } from './contact/contact.component';
 
@@ -29,12 +30,13 @@ import { ContactComponent } from './contact/contact.component';
     HomeComponent,
     MenuComponent,
     InfosComponent,
-    MatchsComponent,
+    MatchListComponent,
     StatsComponent,
     ContactComponent
   ],
   imports: [
     BrowserModule,
+    AppRoutingModule,
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
@@ -46,7 +48,7 @@ import { ContactComponent } from './contact/contact.component';
     MatButtonModule,
     MatProgressSpinnerModule,
     FontAwesomeModule,
-    AppRoutingModule
+    MatSortModule
   ],
   providers: [],
   bootstrap: [AppComponent]

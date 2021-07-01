@@ -5,12 +5,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './ui/home/home.component';
 import { StatsComponent } from './ui/stats/stats.component';
 import { InfosComponent } from './ui/infos/infos.component';
-import { MatchsComponent } from './ui/matchs/matchs.component';
+import { MatchListComponent } from './ui/match-list/match-list.component';
 import { ContactComponent } from './contact/contact.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
-  { path: 'match', component: MatchsComponent },
+  { path: 'match', component: MatchListComponent },
   { path: 'stat', component: StatsComponent },
   { path: 'info', component: InfosComponent },
   { path: 'contact', component: ContactComponent },

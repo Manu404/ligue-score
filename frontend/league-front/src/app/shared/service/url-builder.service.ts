@@ -8,7 +8,7 @@ export class UrlBuilderService {
   constructor() { }
 
   private GetBaseUrl() : string {
-    return "https://backend.edhleague.be/index.php/api/v1"
+    return "http://localhost/index.php/api/v1"
   }
 
   public BuildUrl(target:string) : string{

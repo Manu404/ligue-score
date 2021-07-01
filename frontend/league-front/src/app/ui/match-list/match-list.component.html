@@ -1,0 +1,36 @@
+<section class="mat-typography">
+
+    <div class="titleContainer">        
+        <h1 class="pageTitle">Historique des matchs</h1>  
+    </div>
+
+
+    <mat-divider></mat-divider><br />
+    <table mat-table matSort [dataSource]="summaryLines" class="mat-elevation-z8 mat-table table">
+
+        <ng-container matColumnDef="Id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header > Date </th>
+            <td mat-cell *matCellDef="let element"> {{element.Id}} </td>
+        </ng-container>
+
+        <div *ngFor="let id of [0, 1, 2, 3]; index as i;">
+            <ng-container matColumnDef="{{'player'+(i+1)}}">
+                <th mat-header-cell *matHeaderCellDef style="text-align: center;"> 
+                    <fa-icon [icon]="faTrophy" [ngClass]="{'gold' : i == 0, 'silver' : i == 1, 'bronze' : i == 2}"></fa-icon> 
+                    {{ i + 1 }} 
+                </th>
+                <td mat-cell *matCellDef="let element">  
+                    <div [ngClass]="{'hidden': element.Results[i] === undefined}" class="name centered">
+                        {{element.Results[i]?.Name}}
+                    </div>
+                    <div [ngClass]="{'hidden': element.Results[i] === undefined}" class="centered">
+                        ({{element.Results[i]?.Score}})
+                    </div>
+                </td>
+            </ng-container>
+        </div>
+
+        <tr mat-header-row *matHeaderRowDef="['Id', 'player1', 'player2', 'player3', 'player4']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['Id', 'player1', 'player2', 'player3', 'player4']"></tr>
+    </table>
+</section>
