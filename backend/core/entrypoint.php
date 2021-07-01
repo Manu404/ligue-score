@@ -57,7 +57,7 @@ class EntryPoint {
         $serviceContainer->setAdapterClass('default', 'mysql');
         $manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
         $manager->setConfiguration(array (
-          'dsn' => 'mysql:host=192.168.89.1;port=3306;dbname=mtg_league',
+          'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=mtg_league',
           'user' => 'mtg_league',
           'password' => 'tmp123',
           'settings' =>

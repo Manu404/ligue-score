@@ -24,6 +24,10 @@ while test $# -gt 0; do
 		echo "Publish backend to local test"; 
 		source ./publish_local.sh; 
 		exit;;    
+	publish:be:remote)
+		echo "Publish backend to remote server"; 
+		source ./upload_backend.sh; 
+		exit;;   
 	help)
 		echo "======================================================================================"
 		echo "=============== b e == c a r e f u l./:%£*¨%µ%*jdj'*¨£%$^)z¨^àçgu^ ============ damn ="
