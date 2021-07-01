@@ -12,7 +12,6 @@ import { FacadeService } from '../service/facade.service';
 })
 export class GameRepositoryService {
 
-  private initialized: boolean = false;
   public GamesSummary: GameSummary[] = [];
   public Games: Game[] = [];
 
@@ -26,23 +25,21 @@ export class GameRepositoryService {
         this.GamesSummary = value;
         observer.next(value);
         observer.complete();
-        this.initialized = true;
       });
     });
 
     this.gameObserver = Observable.create((observer: Observer<Game[]>) => {
-      this.GamesSummary = [];
+      this.Games = [];
       this.facade.GetGames().pipe(map(res => res)).subscribe( value => {
         this.Games = value;
         observer.next(value);
         observer.complete();
-        this.initialized = true;
       });
     });
   }
 
   public GetGamesSummary(): Observable<GameSummary[]> {
-    if(!this.initialized)
+    if(this.GamesSummary.length == 0)
       return this.RefreshGamesSummary();
     return of(this.GamesSummary);
   }
@@ -52,7 +49,7 @@ export class GameRepositoryService {
   }
 
   public GetGames(): Observable<Game[]> {
-    if(!this.initialized)
+    if(this.GamesSummary.length == 0)
       return this.RefreshGames();
     return of(this.Games);
   }

@@ -6,16 +6,17 @@ import { HomeComponent } from './ui/home/home.component';
 import { StatsComponent } from './ui/stats/stats.component';
 import { InfosComponent } from './ui/infos/infos.component';
 import { MatchListComponent } from './ui/match-list/match-list.component';
-import { ContactComponent } from './contact/contact.component';
+import { ContactComponent } from './ui/contact/contact.component';
+import { LeaderboardComponent } from './ui/leaderboard/leaderboard.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
+  { path: 'leaderboard', component: LeaderboardComponent },
   { path: 'match', component: MatchListComponent },
   { path: 'stat', component: StatsComponent },
   { path: 'info', component: InfosComponent },
   { path: 'contact', component: ContactComponent },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
-
 ];
 
 @NgModule({

@@ -22,7 +22,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { InfosComponent } from './ui/infos/infos.component';
 import { MatchListComponent } from './ui/match-list/match-list.component';
 import { StatsComponent } from './ui/stats/stats.component';
-import { ContactComponent } from './contact/contact.component';
+import { ContactComponent } from './ui/contact/contact.component';
+import { GameDetailComponent } from './ui/game-detail/game-detail.component';
+import { PlayerComponent } from './ui/player/player.component';
+import { LeaderboardComponent } from './ui/leaderboard/leaderboard.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +35,10 @@ import { ContactComponent } from './contact/contact.component';
     InfosComponent,
     MatchListComponent,
     StatsComponent,
-    ContactComponent
+    ContactComponent,
+    GameDetailComponent,
+    PlayerComponent,
+    LeaderboardComponent
   ],
   imports: [
     BrowserModule,

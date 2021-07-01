@@ -1,11 +1,13 @@
 <mat-nav-list>
-    <img src="./assets/img/l21Logo.png" style="margin-left: 10px; margin-top: 5px;">
+    <a routerLink="/home"> 
+        <img src="./assets/img/l21Logo.png" style="margin-left: 10px; margin-top: 5px;">
+     </a>    
+     <mat-divider></mat-divider>
+    <a mat-list-item routerLink="/leaderboard" routerLinkActive="active" class="menuItem"> CLASSEMENT </a>
+    <a mat-list-item routerLink="/match" routerLinkActive="active" class="menuItem"> MATCH </a>
+    <a mat-list-item routerLink="/stat" routerLinkActive="active" class="menuItem"> STATS </a>
     <mat-divider></mat-divider>
-    <a mat-list-item routerLink="/home" routerLinkActive="active" style="letter-spacing: .2rem;"> CLASSEMENT </a>
-    <a mat-list-item routerLink="/match" routerLinkActive="active" style="letter-spacing: .2rem;"> MATCH </a>
-    <a mat-list-item routerLink="/stat" routerLinkActive="active" style="letter-spacing: .2rem;"> STATS </a>
-    <mat-divider></mat-divider>
-    <a mat-list-item routerLink="/info" routerLinkActive="active" style="letter-spacing: .2rem;"> INFOS </a>
-    <a mat-list-item routerLink="/contact" routerLinkActive="active" style="letter-spacing: .2rem;"> CONTACT </a>
+    <a mat-list-item class="menuItem" href="https://edhleague.be/" target="_blank"> INFOS </a>
+    <a mat-list-item routerLink="/contact" routerLinkActive="active" class="menuItem"> CONTACT </a>
     <mat-divider></mat-divider>
 </mat-nav-list>

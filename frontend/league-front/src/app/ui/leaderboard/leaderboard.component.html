@@ -1,0 +1,40 @@
+<section class="mat-typography">
+
+    <div class="titleContainer">        
+        <!-- <button mat-mini-fab class="titleRefreshButton">
+            <fa-icon (click)="refreshGeneralRanking()" [icon]="faSync"></fa-icon>
+        </button>       -->
+        <h1 class="pageTitle">Classement général</h1>  
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <p>Selectionnez un joueur pour voir le détail de ses matchs.</p>
+
+    <table mat-table [dataSource]="rankings" class="mat-elevation-z8 mat-table table">
+
+        <ng-container matColumnDef="Rank">
+            <th mat-header-cell *matHeaderCellDef> Classement </th>
+            <td mat-cell *matCellDef="let element" [ngClass]="{'gold' : element.Rank == 1, 'silver' : element.Rank == 2, 'bronze' : element.Rank == 3}"> 
+                <fa-icon *ngIf="element.rank <= 3" [icon]="faTrophy"></fa-icon>
+                {{element.Rank}} 
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Name">
+            <th mat-header-cell *matHeaderCellDef> Joueur </th>
+            <td mat-cell *matCellDef="let element" class="name" [ngClass]="{'gold' : element.Rank == 1, 'silver' : element.Rank == 2, 'bronze' : element.Rank == 3}"> {{element.Name}} </td>
+        </ng-container>
+        
+        <ng-container matColumnDef="Score">
+            <th mat-header-cell *matHeaderCellDef> Total </th>
+            <td mat-cell *matCellDef="let element" [ngClass]="{'gold' : element.Rank == 1, 'silver' : element.Rank == 2, 'bronze' : element.Rank == 3}"> {{element.Score}} pts.</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['Rank', 'Name', 'Score']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['Rank', 'Name', 'Score']"></tr>
+    </table>
+</section>
+
+
+
