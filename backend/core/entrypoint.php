@@ -52,12 +52,14 @@ class EntryPoint {
 
     function InitializeDatabase()
     {
+        $connString = $_SERVER['SERVER_NAME'] == 'debbie' ? 'mysql:host=192.168.89.1;port=3306;dbname=mtg_league' : 'mysql:host=127.0.0.1;port=3306;dbname=mtg_league';
+
         $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
         $serviceContainer->checkVersion(2);
         $serviceContainer->setAdapterClass('default', 'mysql');
         $manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
         $manager->setConfiguration(array (
-          'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=mtg_league',
+          'dsn' => $connString,
           'user' => 'mtg_league',
           'password' => 'tmp123',
           'settings' =>
