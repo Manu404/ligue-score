@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Catalog, GetCatalogResponse } from '../model/catalog';
 import { GeneralRanking, GetGeneralRankingResponse } from '../model/general_ranking';
-import { MatchSummary, MatchSummaryResponse } from '../model/match';
+import { GameSummary, GamesSummaryResponse, GetGamesResponse, Game } from '../model/game';
 import { UrlBuilderService } from './url-builder.service';
 
 @Injectable({
@@ -24,8 +24,13 @@ export class FacadeService {
     return this.http.get<GetCatalogResponse>(this.urlBuilder.BuildUrl("/catalog/")).pipe( map( response => response.result ));;
   }
 
-  public GetMatchSummary() : Observable<MatchSummary[]> {
-    console.log("getMatchSummary");
-    return this.http.get<MatchSummaryResponse>(this.urlBuilder.BuildUrl("/match/summary/")).pipe( map( response => response.result ));;
+  public GetGamesSummary() : Observable<GameSummary[]> {
+    console.log("getGamesSummary");
+    return this.http.get<GamesSummaryResponse>(this.urlBuilder.BuildUrl("/game/summary/")).pipe( map( response => response.result ));;
+  }
+
+  public GetGames() : Observable<Game[]> {
+    console.log("getGames");
+    return this.http.get<GetGamesResponse>(this.urlBuilder.BuildUrl("/game/")).pipe( map( response => response.result ));;
   }
 }

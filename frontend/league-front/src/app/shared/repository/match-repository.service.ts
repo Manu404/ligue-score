@@ -3,24 +3,37 @@ import { of } from 'rxjs';
 import { Observable, Observer } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Catalog } from '../model/catalog';
-import { MatchSummary } from '../model/match';
+import { Game, GameSummary } from '../model/game';
 import { FacadeService } from '../service/facade.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class MatchRepositoryService {
+export class GameRepositoryService {
 
   private initialized: boolean = false;
-  public MatchSummary: MatchSummary[] = [];
-  private catalogObserver: Observable<MatchSummary[]>;
+  public GamesSummary: GameSummary[] = [];
+  public Games: Game[] = [];
+
+  private gameSummaryObserver: Observable<GameSummary[]>;
+  private gameObserver: Observable<Game[]>;
 
   constructor(private facade: FacadeService) { 
-    this.catalogObserver = Observable.create((observer: Observer<MatchSummary[]>) => {
-      this.MatchSummary = [];
-      this.facade.GetMatchSummary().pipe(map(res => res)).subscribe( value => {
-        this.MatchSummary = value;
+    this.gameSummaryObserver = Observable.create((observer: Observer<GameSummary[]>) => {
+      this.GamesSummary = [];
+      this.facade.GetGamesSummary().pipe(map(res => res)).subscribe( value => {
+        this.GamesSummary = value;
+        observer.next(value);
+        observer.complete();
+        this.initialized = true;
+      });
+    });
+
+    this.gameObserver = Observable.create((observer: Observer<Game[]>) => {
+      this.GamesSummary = [];
+      this.facade.GetGames().pipe(map(res => res)).subscribe( value => {
+        this.Games = value;
         observer.next(value);
         observer.complete();
         this.initialized = true;
@@ -28,18 +41,23 @@ export class MatchRepositoryService {
     });
   }
 
-  public Initialize(): Observable<MatchSummary[]>{
-    if(this.initialized) return of(this.MatchSummary);
-    return this.GetMatchSummary();
-  }
-
-  public GetMatchSummary(): Observable<MatchSummary[]> {
+  public GetGamesSummary(): Observable<GameSummary[]> {
     if(!this.initialized)
-      return this.RefreshMatchSummary();
-    return of(this.MatchSummary);
+      return this.RefreshGamesSummary();
+    return of(this.GamesSummary);
   }
 
-  public RefreshMatchSummary(): Observable<MatchSummary[]> {
-    return this.catalogObserver;
+  public RefreshGamesSummary(): Observable<GameSummary[]> {
+    return this.gameSummaryObserver;
+  }
+
+  public GetGames(): Observable<Game[]> {
+    if(!this.initialized)
+      return this.RefreshGames();
+    return of(this.Games);
+  }
+
+  public RefreshGames(): Observable<Game[]> {
+    return this.gameObserver;
   }
 }
