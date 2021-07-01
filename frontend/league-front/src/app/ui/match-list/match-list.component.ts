@@ -42,8 +42,10 @@ export class MatchListComponent implements OnInit {
           gameSummary.sort((a, b) => ((b.gameid - a.gameid)*100) - (a.total - b.total)).forEach(summary => {
             if(summary.gameid != currentLine.Id) {  
               if(currentLine.Id > 0) this.summaryLines.push(currentLine);
+              
               var game = games.find(g => g.id == summary.gameid);
               var day = catalog.days.find(d => d.id == game?.dayid);
+              console.log(day);
               currentLine = new GameSummaryLine(summary.gameid, day === undefined ? new Date() : day.date, [])
             }
 

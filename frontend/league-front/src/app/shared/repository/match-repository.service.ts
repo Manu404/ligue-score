@@ -39,7 +39,7 @@ export class GameRepositoryService {
   }
 
   public GetGamesSummary(): Observable<GameSummary[]> {
-    if(this.GamesSummary.length == 0)
+    if(this.GamesSummary.length === 0)
       return this.RefreshGamesSummary();
     return of(this.GamesSummary);
   }
@@ -49,7 +49,7 @@ export class GameRepositoryService {
   }
 
   public GetGames(): Observable<Game[]> {
-    if(this.GamesSummary.length == 0)
+    if(this.Games.length === 0)
       return this.RefreshGames();
     return of(this.Games);
   }
